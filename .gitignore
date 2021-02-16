@@ -137,4 +137,8 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-transformlayer\transformlayer\credentials.py
+transformlayer/transformlayer/credentials.py
+transformlayer/transformapi/config.ini
+
+# Visual studio code
+.vscode
