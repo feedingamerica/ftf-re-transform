@@ -68,10 +68,16 @@ def parse_request(input_dict):
     clean_dict["scope"]["end_date"] = input_dict["Scope"]["endDate"]
 
     # Setting the control type
-    clean_dict["scope"]["control_type"] = input_dict["Scope"]["control_type_field"]
+    if "control_type_field" not in input_dict["Scope"]:
+        clean_dict["scope"]["control_type"] = "dummy_is_grocery_service"
+    else:
+        clean_dict["scope"]["control_type"] = input_dict["Scope"]["control_type_field"]
 
     # Setting the control type value
-    clean_dict["scope"]["control_type_value"] = int(input_dict["Scope"]["control_type_value"])
+    if "control_type_value" not in input_dict["Scope"]:
+        clean_dict["scope"]["control_type_value"] = 1
+    else:
+        clean_dict["scope"]["control_type_value"] = int(input_dict["Scope"]["control_type_value"])
 
     datalist = list()
 
