@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 django = "*"
 mysql-connector-python = "*"
+pandas = "*"
+python-dateutil = "*"
 
 [dev-packages]
 

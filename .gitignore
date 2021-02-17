@@ -138,3 +138,8 @@ dmypy.json
 cython_debug/
 
 transformlayer/transformlayer/credentials.py
+transformlayer/transformapi/config.ini
+
+# Visual studio code
+.vscode
+

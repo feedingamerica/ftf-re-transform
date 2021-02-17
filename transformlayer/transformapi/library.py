@@ -84,6 +84,7 @@ def parse_request(input_dict):
     # Getting everything from data dict 
     for item in input_dict["ReportInfo"]:
         current_object = {
+            "reportDictId":None,
             "dataDefId":None,
             "name":None,
             "dataDefType":None
@@ -97,6 +98,7 @@ def parse_request(input_dict):
 
         # Getting dataDefType
         current_object["dataDefType"] = item["dataDefType"]
+        current_object["reportDictId"] = item["reportDictId"]
 
         datalist.append(current_object)
     
