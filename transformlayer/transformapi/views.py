@@ -5,6 +5,7 @@ from .library import parse_request
 from . import calculations as calc
 #from .calculations import get_services_total
 
+
 def test_endpoint_1(request):
     return HttpResponse('This is a test. Hello World!')
 
