@@ -10,4 +10,4 @@ def test_endpoint_2(request):
     return HttpResponse('We are FTF.')
 
 def test_data_service(request, id):
-    return HttpResponse(Data_Service.get_data_from_definition(id))
+    return HttpResponse(str(id) + "\t" + Data_Service.get_data_from_definition(id))

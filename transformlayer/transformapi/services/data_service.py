@@ -5,6 +5,6 @@ class Data_Service:
         return print("my function")
 
     def get_data_from_definition(id):
-        func = Data_Service_Switcher.switcher.get(id, Data_Service_Switcher.get_data_def_error)
+        func = Data_Service_Switcher.data_def_function_switcher.get(id, Data_Service_Switcher.get_data_def_error)
         return func()
         
