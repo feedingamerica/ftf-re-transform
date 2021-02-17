@@ -87,6 +87,10 @@ class Data_Service_Switcher:
     def __get_hh_grandparent():
         return "my 1 function"
 
+    ## error, none
+    def get_data_def_error():
+        return "not a valid data definition"
+
     ## Data Defintion Switcher
     # usage:
     #   func = __switcher.get(id)

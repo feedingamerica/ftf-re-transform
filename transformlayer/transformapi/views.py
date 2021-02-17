@@ -9,5 +9,5 @@ def test_endpoint_1(request):
 def test_endpoint_2(request):
     return HttpResponse('We are FTF.')
 
-def test_data_service(request):
-    return HttpResponse(Data_Service.get_data_from_definition(2))
+def test_data_service(request, id):
+    return HttpResponse(Data_Service.get_data_from_definition(id))
