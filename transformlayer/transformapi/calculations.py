@@ -11,9 +11,6 @@ from django.db import connections
 BIG_NUM_NAMES = ["services_total", "undup_hh_total", "undup_indv_total", "services_per_uhh_avg"]
 DEFAULT_CTRL = "dummy_is_grocery_service"
 DEFAULT_CTRL_VAL = "1"
-
-
-
     
 #3
 def get_undup_indv_total(connection, params):
@@ -22,7 +19,7 @@ def get_undup_indv_total(connection, params):
 def get_services_per_uhh_avg(connection, params):
     pass
 
-#TODO date
+#TODO deal with missing values in params ie no date to scope on.
 def construct_fs_query(params):
     table1 = ""
     left1 = right1 = ""
@@ -45,12 +42,17 @@ def construct_fs_query(params):
     where_stmt = "WHERE fs.service_status = 17"
     where_stmt += (" AND t1.{} = {}".format(params["scope"]["scope_field"], 
                                 params["scope"]["scope_field_value"]) )
+
+    start_date = date_str_to_int(params["scope"]["start_date"])
+    end_date = date_str_to_int(params["scope"]["end_date"])
+    where_date = " AND fs.date >= {} AND fs.date <= {}".format(start_date,end_date)
+    where_stmt += where_date
     
     query = query.format(t1 = table1, left1 = left1, right1 = right1)
     query += where_stmt
     return query
 
-def convert_date_string_to_int(date):
+def date_str_to_int(date):
     dt = parser.parse(date,dayfirst = False)
     date_int = (10000*dt.year)+ (100 * dt.month) + dt.day 
     return date_int
@@ -88,8 +90,7 @@ def get_services_total(connection, params):
 
     query_control = """SELECT id, {} FROM dim_service_types""".format(ct)
 
-
-    #replace with calls to christina's service
+    #TODO replace with calls to christina's service
     services = pd.read_sql(query_fact_services,connection)
     service_types = pd.read_sql(query_control, connection)
 
@@ -137,7 +138,7 @@ def get_undup_hh_total(connection,params,scoped_services = None):
 
 
 def main():
-    print(convert_date_string_to_int("6/16/1998"))
+    print(date_str_to_int("6/16/1998"))
 
 if __name__=="__main__":
     main()
