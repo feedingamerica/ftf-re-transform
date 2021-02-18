@@ -22,7 +22,6 @@ def get_services_total(params):
     num_services - number of unduplicated services
 
     """
-    #TODO replace with calls to christina's service
     return len(ds.get_data_for_definition(1, params))
 
 #data def 2
