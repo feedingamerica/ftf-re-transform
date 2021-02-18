@@ -41,7 +41,7 @@ def get_undup_hh_total(params):
     return len(ds.get_data_for_definition(2, params))
 
 def main():
-    print(ds.date_str_to_int("6/16/1998"))
+    print(ds.__date_str_to_int("6/16/1998"))
 
 if __name__=="__main__":
     main()

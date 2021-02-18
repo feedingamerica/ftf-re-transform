@@ -23,12 +23,12 @@ class Data_Service:
     def fact_services(params):
         if params["scope"]["scope_type"] == "hierarchy":
             if Data_Service.__fact_services_hierarchy is None:
-                Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.get_fact_services(params)
+                Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.__get_fact_services(params)
             
             return Data_Service.__fact_services_hierarchy
         elif params["scope"]["scope_type"] == "geography":
             if Data_Service.__fact_services_geography is None:
-                Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.get_fact_services(params)
+                Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.__get_fact_services(params)
             
             return Data_Service.__fact_services_geography
 
@@ -36,16 +36,23 @@ class Data_Service:
     def service_types(params):
         if params["scope"]["scope_type"] == "hierarchy":
             if Data_Service.__service_types_hierarchy is None:
-                Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.get_fact_services(params)
+                Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.__get_fact_services(params)
             
             return Data_Service.__service_types_hierarchy
         elif params["scope"]["scope_type"] == "geography":
             if Data_Service.__fact_services_geography is None:
-                Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.get_fact_services(params)
+                Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.__get_fact_services(params)
 
             return Data_Service.__service_types_geography
 
-    def get_fact_services(params):
+
+    ## returns DataFrame for a specific data definition
+    def get_data_for_definition(id, params):
+        func = dds.data_def_function_switcher.get(id, dds.get_data_def_error)
+        return func(params, Data_Service.fact_services(params), Data_Service.service_types(params))
+
+    ## retrieves fact_services
+    def __get_fact_services(params):
         conn = connections['default']
 
         table1 = ""
@@ -69,8 +76,8 @@ class Data_Service:
         where_stmt += (" AND t1.{} = {}".format(params["scope"]["scope_field"],
                                     params["scope"]["scope_field_value"]) )
 
-        start_date = Data_Service.date_str_to_int(params["scope"]["start_date"])
-        end_date = Data_Service.date_str_to_int(params["scope"]["end_date"])
+        start_date = Data_Service.__date_str_to_int(params["scope"]["start_date"])
+        end_date = Data_Service.__date_str_to_int(params["scope"]["end_date"])
         where_date = " AND fs.date >= {} AND fs.date <= {}".format(start_date,end_date)
         where_stmt += where_date
         
@@ -86,11 +93,7 @@ class Data_Service:
 
         return services, service_types
 
-    def get_data_for_definition(id, params):
-        func = dds.data_def_function_switcher.get(id, dds.get_data_def_error)
-        return func(params, Data_Service.fact_services(params), Data_Service.service_types(params))
-
-    def date_str_to_int(date):
+    def __date_str_to_int(date):
         dt = parser.parse(date,dayfirst = False)
         date_int = (10000*dt.year)+ (100 * dt.month) + dt.day 
         return date_int
