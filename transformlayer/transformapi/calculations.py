@@ -66,7 +66,7 @@ def get_services_per_uhh_avg(params):
     """
     num_services = len(ds.get_data_for_definition(1, params))
     num_families = len(ds.get_data_for_definition(2, params))
-    return num_families/num_services
+    return num_services/num_families
 
 
 def main():
