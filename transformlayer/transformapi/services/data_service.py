@@ -1,10 +1,69 @@
-from .data_service_switcher import Data_Service_Switcher
+from pandas.core.frame import DataFrame
+from .data_definition_service import Data_Definition_Service as Data_Def
+import dateutil.parser as parser
+import pandas as pd
+from django.db import connections
 
 class Data_Service:
-    def get_fact_services(scope):
-        return print("my function")
+    fact_services_hierarchy:DataFrame = None
+    service_types_hierarchy:DataFrame = None
+    fact_services_geography:DataFrame = None
+    service_types_geography:DataFrame = None
 
-    def get_data_from_definition(id):
-        func = Data_Service_Switcher.data_def_function_switcher.get(id, Data_Service_Switcher.get_data_def_error)
-        return func()
+    def get_fact_services(connection, params):
+        table1 = ""
+        left1 = right1 = ""
+
+        if params["scope"]["scope_type"] == "hierarchy":
+            table1 = "dim_hierarchies"
+            left1 = right1 = "hierarchy_id"
+        elif params["scope"]["scope_type"] == "geography":
+            table1 = "dim_geos"
+            left1 = "dimgeo_id"
+            right1 = "id"
+
+        query = """SELECT fs.research_service_key, fs.{left1}, fs.service_status, fs.service_id,
+        fs.research_family_key, fs.research_member_key
+        FROM fact_services AS fs
+        LEFT JOIN {t1} AS t1 ON fs.{left1} = t1.{right1}
+        LEFT JOIN dim_service_statuses ON fs.service_status = dim_service_statuses.status 
+        """
+        where_stmt = "WHERE fs.service_status = 17"
+        where_stmt += (" AND t1.{} = {}".format(params["scope"]["scope_field"],
+                                    params["scope"]["scope_field_value"]) )
+
+        start_date = Data_Service.date_str_to_int(params["scope"]["start_date"])
+        end_date = Data_Service.date_str_to_int(params["scope"]["end_date"])
+        where_date = " AND fs.date >= {} AND fs.date <= {}".format(start_date,end_date)
+        where_stmt += where_date
         
+        query = query.format(t1 = table1, left1 = left1, right1 = right1)
+        query += where_stmt
+        
+        ct = params["scope"].get("control_type")
+
+        query_control = """SELECT id, {} FROM dim_service_types""".format(ct)
+
+        services = pd.read_sql(query, connection)
+        service_types = pd.read_sql(query_control, connection)
+
+        return services, service_types
+
+    def get_data_for_definition(id, conn, params):
+        func = Data_Def.data_def_function_switcher.get(id, Data_Def.get_data_def_error)
+
+        if params["scope"]["scope_type"] == "hierarchy":
+            if Data_Service.fact_services_hierarchy is None:
+                Data_Service.fact_services_hierarchy, Data_Service.service_types_hierarchy = Data_Service.get_fact_services(conn, params)
+            
+            return func(params, Data_Service.fact_services_hierarchy, Data_Service.service_types_hierarchy)
+        elif params["scope"]["scope_type"] == "geography":
+            if Data_Service.fact_services_geography is None:
+                Data_Service.fact_services_geography, Data_Service.service_types_geography = Data_Service.get_fact_services(conn, params)
+            
+            return func(params, Data_Service.fact_services_geography, Data_Service.service_types_geography)
+
+    def date_str_to_int(date):
+        dt = parser.parse(date,dayfirst = False)
+        date_int = (10000*dt.year)+ (100 * dt.month) + dt.day 
+        return date_int
