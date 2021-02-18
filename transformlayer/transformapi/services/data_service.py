@@ -1,16 +1,53 @@
 from pandas.core.frame import DataFrame
-from .data_definition_service import Data_Definition_Service as Data_Def
+from .data_definition_service import Data_Definition_Service as dds
 import dateutil.parser as parser
 import pandas as pd
 from django.db import connections
 
 class Data_Service:
-    fact_services_hierarchy:DataFrame = None
-    service_types_hierarchy:DataFrame = None
-    fact_services_geography:DataFrame = None
-    service_types_geography:DataFrame = None
+    __fact_services_hierarchy:DataFrame = None
+    __service_types_hierarchy:DataFrame = None
+    __fact_services_geography:DataFrame = None
+    __service_types_geography:DataFrame = None
 
-    def get_fact_services(connection, params):
+    ##  getter and setter for fact_services based on the scope "hierarchy" or "geography" (also sets related service_types if None)
+    ##  Columns always in services:
+    ##      research_service_key
+    ##      service_status
+    ##      service_id
+    ##      research_family_key
+    ##      research_member_key
+    ##      Additional columns depending on params:
+    ##      hierarchy_id - if scope_type is "hierarchy"
+    ##      dimgeo_id - if scope_type is "geography"
+    def fact_services(params):
+        if params["scope"]["scope_type"] == "hierarchy":
+            if Data_Service.__fact_services_hierarchy is None:
+                Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.get_fact_services(params)
+            
+            return Data_Service.__fact_services_hierarchy
+        elif params["scope"]["scope_type"] == "geography":
+            if Data_Service.__fact_services_geography is None:
+                Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.get_fact_services(params)
+            
+            return Data_Service.__fact_services_geography
+
+    # getter and setter for service_types based on the scope "hierarchy" or "geography" (also sets related fact_service if None)
+    def service_types(params):
+        if params["scope"]["scope_type"] == "hierarchy":
+            if Data_Service.__service_types_hierarchy is None:
+                Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.get_fact_services(params)
+            
+            return Data_Service.__service_types_hierarchy
+        elif params["scope"]["scope_type"] == "geography":
+            if Data_Service.__fact_services_geography is None:
+                Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.get_fact_services(params)
+
+            return Data_Service.__service_types_geography
+
+    def get_fact_services(params):
+        conn = connections['default']
+
         table1 = ""
         left1 = right1 = ""
 
@@ -44,24 +81,14 @@ class Data_Service:
 
         query_control = """SELECT id, {} FROM dim_service_types""".format(ct)
 
-        services = pd.read_sql(query, connection)
-        service_types = pd.read_sql(query_control, connection)
+        services = pd.read_sql(query, conn)
+        service_types = pd.read_sql(query_control, conn)
 
         return services, service_types
 
-    def get_data_for_definition(id, conn, params):
-        func = Data_Def.data_def_function_switcher.get(id, Data_Def.get_data_def_error)
-
-        if params["scope"]["scope_type"] == "hierarchy":
-            if Data_Service.fact_services_hierarchy is None:
-                Data_Service.fact_services_hierarchy, Data_Service.service_types_hierarchy = Data_Service.get_fact_services(conn, params)
-            
-            return func(params, Data_Service.fact_services_hierarchy, Data_Service.service_types_hierarchy)
-        elif params["scope"]["scope_type"] == "geography":
-            if Data_Service.fact_services_geography is None:
-                Data_Service.fact_services_geography, Data_Service.service_types_geography = Data_Service.get_fact_services(conn, params)
-            
-            return func(params, Data_Service.fact_services_geography, Data_Service.service_types_geography)
+    def get_data_for_definition(id, params):
+        func = dds.data_def_function_switcher.get(id, dds.get_data_def_error)
+        return func(params, Data_Service.fact_services(params), Data_Service.service_types(params))
 
     def date_str_to_int(date):
         dt = parser.parse(date,dayfirst = False)

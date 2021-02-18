@@ -43,10 +43,9 @@ def test_endpoint_2(request):
             }
         ]
     }
-    conn = connections['default']
     params = parse_request(sample_dict)
-    num_services = calc.get_services_total(conn,params)
-    num_families = calc.get_undup_hh_total(conn,params)
+    num_services = calc.get_services_total(params)
+    num_families = calc.get_undup_hh_total(params)
     print("Number of unduplicated services " + str(num_services))
     print("Number of unduplicated families " + str(num_families))
 
