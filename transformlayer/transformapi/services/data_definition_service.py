@@ -7,6 +7,7 @@ class Data_Definition_Service:
     ####        params
     ####        services - fact service data table
     ####        service_types - service_types data table
+    @staticmethod
     def __get_services_total(params, services:DataFrame, service_types:DataFrame):
         ct = params["scope"].get("control_type")
         ct_value = params["scope"].get("control_type_value")
@@ -18,6 +19,7 @@ class Data_Definition_Service:
     ## Data Definition 2
     ####    Expects:
     ####        services - fact service data table
+    @staticmethod
     def __get_undup_hh_total(params, services:DataFrame, service_types:DataFrame):
         ct = params["scope"].get("control_type")
         ct_value = params["scope"].get("control_type_value")
@@ -27,86 +29,107 @@ class Data_Definition_Service:
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
     ## 3
+    @staticmethod
     def __get_undup_indv_total(params, services:DataFrame, service_types:DataFrame):
         return "__get_undup_indv_total"
     
     ## 4
+    @staticmethod
     def __get_services_per_uhh_avg(params, services:DataFrame, service_types:DataFrame):
         return "__get_services_per_uhh_avg"
     
     ## 5
+    @staticmethod
     def __get_hh_wminor(params, services:DataFrame, service_types:DataFrame):
         return "__get_hh_wminor"
     
     ## 6
+    @staticmethod
     def __get_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         return "__get_hh_wominor"
     
     ## 7
+    @staticmethod
     def __get_hh_total(params, services:DataFrame, service_types:DataFrame):
         return "__get_hh_total"
     
     ## 8
+    @staticmethod
     def __get_indv_sen_hh_wminor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_sen_hh_wminor"
     
     ## 9
+    @staticmethod
     def __get_indv_sen_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_sen_hh_wominor"
     
     ## 10
+    @staticmethod
     def __get_indv_sen_total(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_sen_total"
     
     ## 11
+    @staticmethod
     def __get_indv_adult_hh_wminor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_adult_hh_wminor"
     
     ## 12
+    @staticmethod
     def __get_indv_adult_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_adult_hh_wominor"
     
     ## 13
+    @staticmethod
     def __get_indv_adult_total(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_adult_total"
     
     ## 14
+    @staticmethod
     def __get_indv_child_hh_wminor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_child_hh_wminor"
     
     ## 15
+    @staticmethod
     def __get_indv_child_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_child_hh_wominor"
     
     ## 16
+    @staticmethod
     def __get_indv_child_total(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_child_total"
     
     ## 17
+    @staticmethod
     def __get_indv_total_hh_wminor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_total_hh_wminor"
     
     ## 18
+    @staticmethod
     def __get_indv_total_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_total_hh_wominor"
     
     ## 19
+    @staticmethod
     def __get_indv_total(params, services:DataFrame, service_types:DataFrame):
         return "__get_indv_total"
     
     ## 20
+    @staticmethod
     def __get_hh_wsenior(params, services:DataFrame, service_types:DataFrame):
         return "__get_hh_wsenior"
     
     ## 21
+    @staticmethod
     def __get_hh_wosenior(params, services:DataFrame, service_types:DataFrame):
         return "__get_hh_wosenior"
     
     ## 22
+    @staticmethod
     def __get_hh_grandparent(params, services:DataFrame, service_types:DataFrame):
         return "__get_hh_grandparent"
 
     ## error, none
+    @staticmethod
     def get_data_def_error(params, services:DataFrame, service_types:DataFrame):
         return "get_data_def_error"
 
