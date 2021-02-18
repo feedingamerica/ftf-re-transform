@@ -102,7 +102,7 @@ def parse_request(input_dict):
 
         datalist.append(current_object)
     
-    clean_dict["data_dictionary"]["data_list"] = datalist;
+    clean_dict["data_dictionary"]["data_list"] = datalist
 
     return clean_dict
 
