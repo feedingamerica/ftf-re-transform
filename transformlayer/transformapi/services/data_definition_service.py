@@ -32,16 +32,16 @@ class Data_Definition_Service:
     def __get_services_per_uhh_avg(params, services:DataFrame, service_types:DataFrame):
         return Data_Definition_Service.__get_services_total(params, services, service_types), Data_Definition_Service.__get_undup_hh_total(params, services, service_types)
     
-    ## Data Definition 5
+    ## Data Definition 5, 14, 16
     ####    Returns: services
-    ####        services - fact service data table, unduplicated households filtered on served_children > 0
+    ####        services - fact service data table, filtered on served_children > 0
     def __get_hh_wminor(params, services:DataFrame, service_types:DataFrame):
         services = Data_Definition_Service.__get_services_total(params, services, service_types)
         return services[services['served_children']>0]
     
     ## Data Definition 6
     ####    Returns: services
-    ####        services - fact service data table, unduplicated households filtered on served_children == 0
+    ####        services - fact service data table, filtered on served_children == 0
     def __get_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         services = Data_Definition_Service.__get_services_total(params, services, service_types)
         return services[services['served_children']==0]
@@ -94,13 +94,6 @@ class Data_Definition_Service:
     def __get_indv_child_hh_wominor(params, services:DataFrame, service_types:DataFrame):
         return DataFrame()
     
-    ## Data Definition 14 and 16
-    ####    Returns: children_hh
-    ####        children_hh - fact service data table, filtered on served_children > 0
-    def __get_indv_child_total(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Definition_Service.__get_services_total(params, services, service_types)
-        return services[services['served_children']>0]
-    
     ## Data Definition 17
     ####    Returns services_wminor
     ####        services_wminor - fact service data table, filtered on served_children > 0
@@ -144,9 +137,9 @@ class Data_Definition_Service:
             11: __get_indv_adult_hh_wminor,
             12: __get_indv_adult_hh_wominor,
             13: __get_indv_adult_total,
-            14: __get_indv_child_total,
+            14: __get_hh_wminor,
             15: __get_indv_child_hh_wominor,
-            16: __get_indv_child_total,
+            16: __get_hh_wminor,
             17: __get_indv_total_hh_wminor,
             18: __get_indv_total_hh_wominor,
             19: __get_services_total,
