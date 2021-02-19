@@ -1,31 +1,28 @@
 from pandas.core.frame import DataFrame
 
 class Data_Definition_Service:
-    def merge_service_types(params, services, service_types):
+    ## Data Definition 1, 7, 19
+    ####    Returns: services
+    ####        services - fact service data table
+    def __get_services_total(params, services:DataFrame, service_types:DataFrame):
         ct = params["scope"].get("control_type")
         ct_value = params["scope"].get("control_type_value")
         services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
         services = services.query('{} == {}'.format(ct, ct_value))
         return services
-
-    ## Data Definition 1
-    ####    Returns: services
-    ####        services - fact service data table
-    def __get_services_total(params, services:DataFrame, service_types:DataFrame):
-        return Data_Definition_Service.merge_service_types(params, services, service_types)
     
     ## Data Definition 2
     ####    Returns: services
     ####        families - unduplicated families data table
     def __get_undup_hh_total(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Definition_Service.merge_service_types(params, services, service_types)
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
     ## Data Definiton 3
     ####    Returns: services
     ####        inidividuals - unduplicated individuals data table
     def __get_undup_indv_total(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Definition_Service.merge_service_types(params, services, service_types)
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
         return services.drop_duplicates(subset = 'research_member_key', inplace = False)
     
     ## Data Definiton 4
@@ -37,81 +34,93 @@ class Data_Definition_Service:
     
     ## Data Definition 5
     ####    Returns: services
-    ####        services - fact service data table, filtered on served_chilren > 0
+    ####        services - fact service data table, unduplicated households filtered on served_children > 0
     def __get_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Definition_Service.merge_service_types(params, services, service_types)
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
         return services[services['served_children']>0]
     
     ## Data Definition 6
     ####    Returns: services
-    ####        services - fact service data table, filtered on served_chilren == 0
+    ####        services - fact service data table, unduplicated households filtered on served_children == 0
     def __get_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Definition_Service.merge_service_types(params, services, service_types)
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
         return services[services['served_children']==0]
     
-    ## 7
-    def __get_hh_total(params, services:DataFrame, service_types:DataFrame):
-        return "__get_hh_total"
-    
-    ## 8
+    ## Data Definition 8, 22
+    ####    Returns: sen_hh_wminor
+    ####        sen_hh_wminor - fact service data table, filtered on served_children > 0 and served_seniors > 0
     def __get_indv_sen_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_sen_hh_wminor"
+        seniors = Data_Definition_Service.__get_indv_sen_total(params, services, service_types)
+        return seniors[seniors['served_children']>0]
     
-    ## 9
+    ## Data Definition 9
+    ####    Returns: sen_hh_wominor
+    ####        sen_hh_wominor - fact service data table, filtered on served_children == 0 and served_seniors > 0
     def __get_indv_sen_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_sen_hh_wominor"
+        seniors = Data_Definition_Service.__get_indv_sen_total(params, services, service_types)
+        return seniors[seniors['served_children']==0]
     
-    ## 10
+    ## Data Definition 10, 20
+    ####    Returns: sen_hh
+    ####        sen_hh - fact service data table, filtered on served_seniors > 0
     def __get_indv_sen_total(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_sen_total"
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
+        return services[services['served_seniors']>0]
     
-    ## 11
+    ## Data Definition 11
+    ####    Returns: adult_hh_wminor
+    ####        adult_hh_wminor - fact service data table, filtered on served_children > 0 and served_adults > 0
     def __get_indv_adult_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_adult_hh_wminor"
+        adults = Data_Definition_Service.__get_indv_adult_total(params, services, service_types)
+        return adults[adults['served_children']>0]
     
-    ## 12
+    ## Data Definition 12
+    ####    Returns: adult_hh_wominor
+    ####        adult_hh_wominor - fact service data table, filtered on served_children == 0 and served_adults > 0
     def __get_indv_adult_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_adult_hh_wominor"
+        adults = Data_Definition_Service.__get_indv_adult_total(params, services, service_types)
+        return adults[adults['served_children']==0]
     
-    ## 13
+    ## Data Definition 13
+    ####    Returns: adult_hh
+    ####        adult_hh - fact service data table, filtered on served_adults > 0
     def __get_indv_adult_total(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_adult_total"
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
+        return services[services['served_adults']>0]
     
-    ## 14
-    def __get_indv_child_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_child_hh_wminor"
-    
-    ## 15
+    ## Data Definition 15
+    ####    Returns: empty
+    ####        empty - empty data table (no such thing as children wo minors)
     def __get_indv_child_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_child_hh_wominor"
+        return DataFrame()
     
-    ## 16
+    ## Data Definition 14 and 16
+    ####    Returns: children_hh
+    ####        children_hh - fact service data table, filtered on served_children > 0
     def __get_indv_child_total(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_child_total"
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
+        return services[services['served_children']>0]
     
-    ## 17
+    ## Data Definition 17
+    ####    Returns services_wminor
+    ####        services_wminor - fact service data table, filtered on served_children > 0
     def __get_indv_total_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_total_hh_wminor"
+        services = Data_Definition_Service.__get_indv_total(params, services, service_types)
+        return services[services['served_children']>0]
     
-    ## 18
+    ## Data Definition 18
+    ####    Returns services_wominor
+    ####        services_wominor - fact service data table, filtered on served_children == 0
     def __get_indv_total_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_total_hh_wominor"
+        services = Data_Definition_Service.__get_indv_total(params, services, service_types)
+        return services[services['served_children']==0]
     
-    ## 19
-    def __get_indv_total(params, services:DataFrame, service_types:DataFrame):
-        return "__get_indv_total"
-    
-    ## 20
-    def __get_hh_wsenior(params, services:DataFrame, service_types:DataFrame):
-        return "__get_hh_wsenior"
-    
-    ## 21
+    ## Data Definition 21
+    ####    Returns services_wosenior
+    ####        services_wosenior - fact service data table, filtered on served_serniors == 0
     def __get_hh_wosenior(params, services:DataFrame, service_types:DataFrame):
-        return "__get_hh_wosenior"
-    
-    ## 22
-    def __get_hh_grandparent(params, services:DataFrame, service_types:DataFrame):
-        return "__get_hh_grandparent"
+        services = Data_Definition_Service.__get_services_total(params, services, service_types)
+        return services[services['served_seniors']==0]
 
     ## error, none
     def get_data_def_error(params, services:DataFrame, service_types:DataFrame):
@@ -128,20 +137,20 @@ class Data_Definition_Service:
             4: __get_services_per_uhh_avg,
             5: __get_hh_wminor,
             6: __get_hh_wominor,
-            7: __get_hh_total,
+            7: __get_services_total,
             8: __get_indv_sen_hh_wminor,
             9: __get_indv_sen_hh_wominor,
             10: __get_indv_sen_total,
             11: __get_indv_adult_hh_wminor,
             12: __get_indv_adult_hh_wominor,
             13: __get_indv_adult_total,
-            14: __get_indv_child_hh_wminor,
+            14: __get_indv_child_total,
             15: __get_indv_child_hh_wominor,
             16: __get_indv_child_total,
             17: __get_indv_total_hh_wminor,
             18: __get_indv_total_hh_wominor,
-            19: __get_indv_total,
-            20: __get_hh_wsenior,
+            19: __get_services_total,
+            20: __get_indv_sen_total,
             21: __get_hh_wosenior,
-            22: __get_hh_grandparent,
+            22: __get_indv_sen_hh_wminor,
         }
