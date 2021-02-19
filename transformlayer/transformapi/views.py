@@ -3,9 +3,7 @@ from django.http import HttpResponse
 from django.db import connections
 from .library import parse_request
 from .services.data_service import Data_Service
-from .calculations import CalculationDispatcher
-import json
-
+from . import calculations as calc
 #from .calculations import get_services_total
 
 def test_endpoint_1(request):
@@ -35,16 +33,24 @@ def test_endpoint_2(request):
                 "dataDefId":2,
                 "name":"name_two",
                 "dataDefType":"type1"
+            },
+            {
+                "reportId":3,
+                "reportDictId":3,
+                "dataDefId":3,
+                "name":"name_three",
+                "dataDefType":"type1"
             }
         ]
     }
-    request = parse_request(sample_dict)
-    dispatch = CalculationDispatcher(request)
-    results = dispatch.run_calculations()
-    print(results)
-    print(request)
+    params = parse_request(sample_dict)
+    num_services = calc.get_services_total(params)
+    num_families = calc.get_undup_hh_total(params)
+
+    response = "Number of unduplicated services " + str(num_services)
+    response += "\n"
+    response += "Number of unduplicated families " + str(num_families)
     
-    response = "We are FTF"
     print(response)
     return HttpResponse(response)
 

@@ -110,8 +110,8 @@ class Data_Service:
     ####    Returns: services
     ####        services - fact service data table
     def __get_services(params, services:DataFrame, service_types:DataFrame):
-        ct = params["scope"].get("control_type")
-        ct_value = params["scope"].get("control_type_value")
+        ct = params["Scope"].get("control_type_field")
+        ct_value = params["Scope"].get("control_type_value")
         services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
         services = services.query('{} == {}'.format(ct, ct_value))
         return services
