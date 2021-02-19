@@ -3,7 +3,6 @@ from .services.data_service import Data_Service as ds
 BIG_NUM_NAMES = ["services_total", "undup_hh_total", "undup_indv_total", "services_per_uhh_avg"]
 DEFAULT_CTRL = "dummy_is_grocery_service"
 DEFAULT_CTRL_VAL = "1"
-    
 
 class CalculationDispatcher:
     def __init__(self, request):
@@ -85,7 +84,7 @@ def __get_undup_hh_total(params):
     """
     return len(ds.get_data_for_definition(2, params))
 #data def 3
-def undup_indv_total(params):
+def __get_undup_indv_total(params):
     """Calculate number of unique individuals. DataDef 3
 
     Arguments:
@@ -98,11 +97,10 @@ def undup_indv_total(params):
     num_familes - number of unique individuals
 
     """
-
     return len(ds.get_data_for_definition(3, params))
 
 #data def 4
-def get_services_per_uhh_avg(params):
+def __get_services_per_uhh_avg(params):
     """Calculate number of services per family DataDef 4
 
     Arguments:
@@ -115,19 +113,8 @@ def get_services_per_uhh_avg(params):
     num_services_avg - average number of services per family
 
     """
-    num_services = len(ds.get_data_for_definition(1, params))
-    num_families = len(ds.get_data_for_definition(2, params))
-    return num_services/num_families
-
-
-
-
-#3
-def __get_undup_indv_total(params):
-    pass
-#4
-def __get_services_per_uhh_avg(params):
-    pass
+    services, families = ds.get_data_for_definition(4, params)
+    return len(services)/len(families)
 
 #Ohio Addin
 

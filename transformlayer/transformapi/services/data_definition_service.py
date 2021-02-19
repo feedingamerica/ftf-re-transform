@@ -6,43 +6,53 @@ from pandas.core.frame import DataFrame
 ####        params
 ####        services - fact service data table
 ####        service_types - service_types data table
-def __get_services_total(params, services:DataFrame, service_types:DataFrame):
+def merge_service_types(params, services, service_types):
     ct = params["Scope"].get("control_type_field")
     ct_value = params["Scope"].get("control_type_value")
-
     services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
     services = services.query('{} == {}'.format(ct, ct_value))
     return services
 
-## Data Definition 2
-####    Expects:
+## Data Definition 1
+####    Returns: services
 ####        services - fact service data table
+def __get_services_total(params, services:DataFrame, service_types:DataFrame):
+    return merge_service_types(params, services, service_types)
+
+## Data Definition 2
+####    Returns: services
+####        families - unduplicated families data table
 def __get_undup_hh_total(params, services:DataFrame, service_types:DataFrame):
-    ct = params["Scope"].get("control_type_field")
-    ct_value = params["Scope"].get("control_type_value")
-    services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
-    services = services.query('{} == {}'.format(ct, ct_value))
+    services = merge_service_types(params, services, service_types)
     return services.drop_duplicates(subset = 'research_family_key', inplace = False)
 
-## 3
+## Data Definiton 3
+####    Returns: services
+####        inidividuals - unduplicated individuals data table
 def __get_undup_indv_total(params, services:DataFrame, service_types:DataFrame):
-    ct = params["Scope"].get("control_type_field")
-    ct_value = params["Scope"].get("control_type_value")
-    services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
-    services = services.query('{} == {}'.format(ct, ct_value))
+    services = merge_service_types(params, services, service_types)
     return services.drop_duplicates(subset = 'research_member_key', inplace = False)
 
-## 4
+## Data Definiton 4
+####    Returns: (services, families)
+####        services - fact service data table
+####        families - unduplicated families data table
 def __get_services_per_uhh_avg(params, services:DataFrame, service_types:DataFrame):
-    return "__get_services_per_uhh_avg"
+    return __get_services_total(params, services, service_types), __get_undup_hh_total(params, services, service_types)
 
-## 5
+## Data Definition 5
+####    Returns: services
+####        services - fact service data table, filtered on served_chilren > 0
 def __get_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-    return "__get_hh_wminor"
+    services = merge_service_types(params, services, service_types)
+    return services[services['served_children']>0]
 
-## 6
+## Data Definition 6
+####    Returns: services
+####        services - fact service data table, filtered on served_chilren == 0
 def __get_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-    return "__get_hh_wominor"
+    services = merge_service_types(params, services, service_types)
+    return services[services['served_children']==0]
 
 ## 7
 def __get_hh_total(params, services:DataFrame, service_types:DataFrame):
