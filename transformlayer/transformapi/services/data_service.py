@@ -5,9 +5,7 @@ from django.db import connections
 
 class Data_Service:
     __fact_services_hierarchy:DataFrame = None
-    __service_types_hierarchy:DataFrame = None
     __fact_services_geography:DataFrame = None
-    __service_types_geography:DataFrame = None
 
     ##  getter and setter for fact_services based on the scope "hierarchy" or "geography" (also sets related service_types if None)
     ##  Columns always in services:
@@ -27,35 +25,20 @@ class Data_Service:
     def fact_services(cls,params):
         if params["Scope"]["scope_type"] == "hierarchy":
             if cls.__fact_services_hierarchy is None:
-                cls.__fact_services_hierarchy, cls.__service_types_hierarchy = cls.__get_fact_services(params)
+                cls.__fact_services_hierarchy = cls.__get_fact_services(params)
             
             return cls.__fact_services_hierarchy
         elif params["Scope"]["scope_type"] == "geography":
             if cls.__fact_services_geography is None:
-                cls.__fact_services_geography, cls.__service_types_geography = cls.__get_fact_services(params)
+                cls.__fact_services_geography = cls.__get_fact_services(params)
             
             return cls.__fact_services_geography
-
-    # getter and setter for service_types based on the scope "hierarchy" or "geography" (also sets related fact_service if None)
-    @classmethod
-    def service_types(cls,params):
-        if params["Scope"]["scope_type"] == "hierarchy":
-            if cls.__service_types_hierarchy is None:
-                cls.__fact_services_hierarchy, cls.__service_types_hierarchy = cls.__get_fact_services(params)
-            
-            return cls.__service_types_hierarchy
-        elif params["Scope"]["scope_type"] == "geography":
-            if cls.__fact_services_geography is None:
-                cls.__fact_services_geography, cls.__service_types_geography = cls.__get_fact_services(params)
-
-            return cls.__service_types_geography
-
 
     ## returns DataFrame for a specific data definition
     @classmethod
     def get_data_for_definition(cls,id, params):
         func = cls.data_def_function_switcher.get(id, cls.get_data_def_error)
-        return func(params, cls.fact_services(params), cls.service_types(params))
+        return func(params, cls.fact_services(params))
 
     ## retrieves fact_services
     @classmethod
@@ -92,13 +75,15 @@ class Data_Service:
         query += where_stmt
         
         ct = params["Scope"].get("control_type_field")
+        ct_value = params["Scope"].get("control_type_value")
 
         query_control = """SELECT id, {} FROM dim_service_types""".format(ct)
 
         services = pd.read_sql(query, conn)
         service_types = pd.read_sql(query_control, conn)
-
-        return services, service_types
+        services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
+        services = services.query('{} == {}'.format(ct, ct_value))
+        return services
 
     @staticmethod
     def __date_str_to_int(date):
@@ -109,105 +94,101 @@ class Data_Service:
     ## DataFrame to fulfill Data Definitions 1, 7, 19
     ####    Returns: services
     ####        services - fact service data table
-    def __get_services(params, services:DataFrame, service_types:DataFrame):
-        ct = params["Scope"].get("control_type_field")
-        ct_value = params["Scope"].get("control_type_value")
-        services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
-        services = services.query('{} == {}'.format(ct, ct_value))
+    def __get_services(params, services:DataFrame):
         return services
     
     ## DataFrame to fulfill Data Definition 2
     ####    Returns: services
     ####        families - unduplicated families data table
-    def __get_undup_hh(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_undup_hh(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
     ## DataFrame to fulfill Data Definiton 3
     ####    Returns: services
     ####        inidividuals - unduplicated individuals data table
-    def __get_undup_indv(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_undup_indv(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services.drop_duplicates(subset = 'research_member_key', inplace = False)
     
     ## DataFrames to fulfill Data Definiton 4
     ####    Returns: (services, families)
     ####        services - fact service data table
     ####        families - unduplicated families data table
-    def __get_services_and_uhh(params, services:DataFrame, service_types:DataFrame):
-        return Data_Service.__get_services(params, services, service_types), Data_Service.__get_undup_hh(params, services, service_types)
+    def __get_services_and_uhh(params, services:DataFrame):
+        return Data_Service.__get_services(params, services), Data_Service.__get_undup_hh(params, services)
     
     ## DataFrame to fulfill Data Definitions 5, 14, 16, 17
     ####    Returns: services
     ####        services - fact service data table, filtered on served_children > 0
-    def __get_wminor(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_wminor(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services[services['served_children']>0]
     
     ## DataFrame to fulfill Data Definition 6
     ####    Returns: services
     ####        services - fact service data table, filtered on served_children == 0
-    def __get_wominor(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_wominor(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services[services['served_children']==0]
     
     ## DataFrame to fulfill Data Definitions 8, 18, 22
     ####    Returns: sen_hh_wminor
     ####        sen_hh_wminor - fact service data table, filtered on served_children > 0 and served_seniors > 0
-    def __get_sen_wminor(params, services:DataFrame, service_types:DataFrame):
-        seniors = Data_Service.__get_sen(params, services, service_types)
+    def __get_sen_wminor(params, services:DataFrame):
+        seniors = Data_Service.__get_sen(params, services)
         return seniors[seniors['served_children']>0]
     
     ## DataFrame to fulfill Data Definition 9
     ####    Returns: sen_hh_wominor
     ####        sen_hh_wominor - fact service data table, filtered on served_children == 0 and served_seniors > 0
-    def __get_sen_wominor(params, services:DataFrame, service_types:DataFrame):
-        seniors = Data_Service.__get_sen(params, services, service_types)
+    def __get_sen_wominor(params, services:DataFrame):
+        seniors = Data_Service.__get_sen(params, services)
         return seniors[seniors['served_children']==0]
     
     ## DataFrame to fulfill Data Definitions 10, 20
     ####    Returns: sen_hh
     ####        sen_hh - fact service data table, filtered on served_seniors > 0
-    def __get_sen(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_sen(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services[services['served_seniors']>0]
     
     ## DataFrame to fulfill Data Definition 11
     ####    Returns: adult_hh_wminor
     ####        adult_hh_wminor - fact service data table, filtered on served_children > 0 and served_adults > 0
-    def __get_adult_wminor(params, services:DataFrame, service_types:DataFrame):
-        adults = Data_Service.__get_adult(params, services, service_types)
+    def __get_adult_wminor(params, services:DataFrame):
+        adults = Data_Service.__get_adult(params, services)
         return adults[adults['served_children']>0]
     
     ## DataFrame to fulfill Data Definition 12
     ####    Returns: adult_hh_wominor
     ####        adult_hh_wominor - fact service data table, filtered on served_children == 0 and served_adults > 0
-    def __get_adult_wominor(params, services:DataFrame, service_types:DataFrame):
-        adults = Data_Service.__get_adult(params, services, service_types)
+    def __get_adult_wominor(params, services:DataFrame):
+        adults = Data_Service.__get_adult(params, services)
         return adults[adults['served_children']==0]
     
     ## DataFrame to fulfill Data Definition 13
     ####    Returns: adult_hh
     ####        adult_hh - fact service data table, filtered on served_adults > 0
-    def __get_adult(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_adult(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services[services['served_adults']>0]
     
     ## DataFrame to fulfill Data Definition 15
     ####    Returns: empty
     ####        empty - empty data table (no such thing as children wo minors)
-    def __get_child_wominor(params, services:DataFrame, service_types:DataFrame):
+    def __get_child_wominor(params, services:DataFrame):
         return DataFrame()
     
     ## DataFrame to fulfill Data Definition 21
     ####    Returns services_wosenior
     ####        services_wosenior - fact service data table, filtered on served_serniors == 0
-    def __get_wosenior(params, services:DataFrame, service_types:DataFrame):
-        services = Data_Service.__get_services(params, services, service_types)
+    def __get_wosenior(params, services:DataFrame):
+        services = Data_Service.__get_services(params, services)
         return services[services['served_seniors']==0]
 
     ## error, none
-    def get_data_def_error(params, services:DataFrame, service_types:DataFrame):
+    def get_data_def_error(params, services:DataFrame):
         return DataFrame()
 
     ## Data Defintion Switcher
