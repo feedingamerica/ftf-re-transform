@@ -17,6 +17,10 @@ class Data_Service:
     ##      service_id
     ##      research_family_key
     ##      research_member_key
+    ##      served_children
+    ##      served_adults
+    ##      served_seniors
+    ##      served_total
     ##      Additional columns depending on params:
     ##      hierarchy_id - if scope_type is "hierarchy"
     ##      dimgeo_id - if scope_type is "geography"
@@ -71,7 +75,7 @@ class Data_Service:
             right1 = "id"
 
         query = """SELECT fs.research_service_key, fs.{left1}, fs.service_status, fs.service_id,
-        fs.research_family_key, fs.research_member_key
+        fs.research_family_key, fs.research_member_key, fs.served_children, fs.served_adults, fs.served_seniors, fs.served_total
         FROM fact_services AS fs
         LEFT JOIN {t1} AS t1 ON fs.{left1} = t1.{right1}
         LEFT JOIN dim_service_statuses ON fs.service_status = dim_service_statuses.status 
@@ -96,7 +100,7 @@ class Data_Service:
         service_types = pd.read_sql(query_control, conn)
 
         return services, service_types
-        
+
     @staticmethod
     def __date_str_to_int(date):
         dt = parser.parse(date,dayfirst = False)

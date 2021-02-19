@@ -9,36 +9,45 @@ class Data_Definition_Service:
         return services
 
     ## Data Definition 1
-    ####    Expects:
-    ####        params
+    ####    Returns: services
     ####        services - fact service data table
-    ####        service_types - service_types data table
     def __get_services_total(params, services:DataFrame, service_types:DataFrame):
         return Data_Definition_Service.merge_service_types(params, services, service_types)
     
     ## Data Definition 2
-    ####    Expects:
-    ####        services - fact service data table
+    ####    Returns: services
+    ####        families - unduplicated families data table
     def __get_undup_hh_total(params, services:DataFrame, service_types:DataFrame):
         services = Data_Definition_Service.merge_service_types(params, services, service_types)
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
-    ## 3
+    ## Data Definiton 3
+    ####    Returns: services
+    ####        inidividuals - unduplicated individuals data table
     def __get_undup_indv_total(params, services:DataFrame, service_types:DataFrame):
         services = Data_Definition_Service.merge_service_types(params, services, service_types)
         return services.drop_duplicates(subset = 'research_member_key', inplace = False)
     
-    ## 4
+    ## Data Definiton 4
+    ####    Returns: (services, families)
+    ####        services - fact service data table
+    ####        families - unduplicated families data table
     def __get_services_per_uhh_avg(params, services:DataFrame, service_types:DataFrame):
         return Data_Definition_Service.__get_services_total(params, services, service_types), Data_Definition_Service.__get_undup_hh_total(params, services, service_types)
     
-    ## 5
+    ## Data Definition 5
+    ####    Returns: services
+    ####        services - fact service data table, filtered on served_chilren > 0
     def __get_hh_wminor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_hh_wminor"
+        services = Data_Definition_Service.merge_service_types(params, services, service_types)
+        return services[services['served_children']>0]
     
-    ## 6
+    ## Data Definition 6
+    ####    Returns: services
+    ####        services - fact service data table, filtered on served_chilren == 0
     def __get_hh_wominor(params, services:DataFrame, service_types:DataFrame):
-        return "__get_hh_wominor"
+        services = Data_Definition_Service.merge_service_types(params, services, service_types)
+        return services[services['served_children']==0]
     
     ## 7
     def __get_hh_total(params, services:DataFrame, service_types:DataFrame):
