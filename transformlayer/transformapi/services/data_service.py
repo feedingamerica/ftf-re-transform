@@ -96,6 +96,7 @@ class Data_Service:
         service_types = pd.read_sql(query_control, conn)
 
         return services, service_types
+        
     @staticmethod
     def __date_str_to_int(date):
         dt = parser.parse(date,dayfirst = False)
