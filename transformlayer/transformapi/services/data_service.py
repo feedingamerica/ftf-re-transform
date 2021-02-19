@@ -208,7 +208,7 @@ class Data_Service:
 
     ## error, none
     def get_data_def_error(params, services:DataFrame, service_types:DataFrame):
-        return "get_data_def_error"
+        return DataFrame()
 
     ## Data Defintion Switcher
     # usage:
