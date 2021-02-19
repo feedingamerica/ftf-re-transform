@@ -26,14 +26,28 @@ def test_endpoint_2(request):
                 "reportId":1,
                 "reportDictId":1,
                 "dataDefId":1,
-                "name":"name_one",
+                "name":"services_total",
                 "dataDefType":"type1"
             },
             {
-                "reportId":2,
-                "reportDictId":2,
+                "reportId":1,
+                "reportDictId":1,
                 "dataDefId":2,
-                "name":"name_two",
+                "name":"undup_hh_total",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":1,
+                "dataDefId":3,
+                "name":"undup_indv_total",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":1,
+                "dataDefId":4,
+                "name":"services_per_uhh_avg",
                 "dataDefType":"type1"
             }
         ]
@@ -42,10 +56,8 @@ def test_endpoint_2(request):
     dispatch = CalculationDispatcher(request)
     results = dispatch.run_calculations()
     print(results)
-    print(request)
     
     response = "We are FTF"
-    print(response)
     return HttpResponse(response)
 
 def test_data_service(request, id):
