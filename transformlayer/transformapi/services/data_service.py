@@ -1,5 +1,5 @@
 from pandas.core.frame import DataFrame
-from .data_definition_service import Data_Definition_Service as dds
+from . import data_definition_service as dds
 import dateutil.parser as parser
 import pandas as pd
 from django.db import connections
@@ -22,12 +22,12 @@ class Data_Service:
     ##      dimgeo_id - if scope_type is "geography"
     @classmethod
     def fact_services(cls,params):
-        if params["scope"]["scope_type"] == "hierarchy":
+        if params["Scope"]["scope_type"] == "hierarchy":
             if Data_Service.__fact_services_hierarchy is None:
                 Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.__get_fact_services(params)
             
             return Data_Service.__fact_services_hierarchy
-        elif params["scope"]["scope_type"] == "geography":
+        elif params["Scope"]["scope_type"] == "geography":
             if Data_Service.__fact_services_geography is None:
                 Data_Service.__fact_services_geography, Data_Service.__service_types_geography = Data_Service.__get_fact_services(params)
             
@@ -36,7 +36,7 @@ class Data_Service:
     # getter and setter for service_types based on the scope "hierarchy" or "geography" (also sets related fact_service if None)
     @classmethod
     def service_types(cls,params):
-        if params["scope"]["scope_type"] == "hierarchy":
+        if params["Scope"]["scope_type"] == "hierarchy":
             if Data_Service.__service_types_hierarchy is None:
                 Data_Service.__fact_services_hierarchy, Data_Service.__service_types_hierarchy = Data_Service.__get_fact_services(params)
             
@@ -62,10 +62,10 @@ class Data_Service:
         table1 = ""
         left1 = right1 = ""
 
-        if params["scope"]["scope_type"] == "hierarchy":
+        if params["Scope"]["scope_type"] == "hierarchy":
             table1 = "dim_hierarchies"
             left1 = right1 = "hierarchy_id"
-        elif params["scope"]["scope_type"] == "geography":
+        elif params["Scope"]["scope_type"] == "geography":
             table1 = "dim_geos"
             left1 = "dimgeo_id"
             right1 = "id"
@@ -77,18 +77,18 @@ class Data_Service:
         LEFT JOIN dim_service_statuses ON fs.service_status = dim_service_statuses.status 
         """
         where_stmt = "WHERE fs.service_status = 17"
-        where_stmt += (" AND t1.{} = {}".format(params["scope"]["scope_field"],
-                                    params["scope"]["scope_field_value"]) )
+        where_stmt += (" AND t1.{} = {}".format(params["Scope"]["scope_field"],
+                                    params["Scope"]["scope_field_value"]) )
 
-        start_date = Data_Service.__date_str_to_int(params["scope"]["start_date"])
-        end_date = Data_Service.__date_str_to_int(params["scope"]["end_date"])
+        start_date = Data_Service.__date_str_to_int(params["Scope"]["startDate"])
+        end_date = Data_Service.__date_str_to_int(params["Scope"]["endDate"])
         where_date = " AND fs.date >= {} AND fs.date <= {}".format(start_date,end_date)
         where_stmt += where_date
         
         query = query.format(t1 = table1, left1 = left1, right1 = right1)
         query += where_stmt
         
-        ct = params["scope"].get("control_type")
+        ct = params["Scope"].get("control_type_field")
 
         query_control = """SELECT id, {} FROM dim_service_types""".format(ct)
 

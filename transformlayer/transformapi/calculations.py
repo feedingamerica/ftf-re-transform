@@ -4,14 +4,11 @@ BIG_NUM_NAMES = ["services_total", "undup_hh_total", "undup_indv_total", "servic
 DEFAULT_CTRL = "dummy_is_grocery_service"
 DEFAULT_CTRL_VAL = "1"
     
-<<<<<<< HEAD
-
-
 
 class CalculationDispatcher:
     def __init__(self, request):
         self.request = request #don't modify directly
-        data_list = request["data_dictionary"]["data_list"]
+        data_list = request["ReportInfo"]
         self.params = request
         self.data_dict = CalculationDispatcher.__group_by_data_def(data_list)
         
@@ -55,18 +52,9 @@ class CalculationDispatcher:
                 result = func(self.params)
                 data_def["value"] = result
 
-        return self.request["data_dictionary"]["data_list"]
+        return self.request["ReportInfo"]
         
-        
-
-     
-        
-
-        
-
 #Big Numbers(Default Engine MVP)
-=======
->>>>>>> refs/remotes/origin/demo-one
 
 #data def 1
 def __get_services_total(params):
