@@ -1,35 +1,31 @@
 from pandas.core.frame import DataFrame
 
 class Data_Definition_Service:
+    def merge_service_types(params, services, service_types):
+        ct = params["scope"].get("control_type")
+        ct_value = params["scope"].get("control_type_value")
+        services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
+        services = services.query('{} == {}'.format(ct, ct_value))
+        return services
+
     ## Data Definition 1
     ####    Expects:
     ####        params
     ####        services - fact service data table
     ####        service_types - service_types data table
     def __get_services_total(params, services:DataFrame, service_types:DataFrame):
-        ct = params["scope"].get("control_type")
-        ct_value = params["scope"].get("control_type_value")
-
-        services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
-        services = services.query('{} == {}'.format(ct, ct_value))
-        return services
+        return Data_Definition_Service.merge_service_types(params, services, service_types)
     
     ## Data Definition 2
     ####    Expects:
     ####        services - fact service data table
     def __get_undup_hh_total(params, services:DataFrame, service_types:DataFrame):
-        ct = params["scope"].get("control_type")
-        ct_value = params["scope"].get("control_type_value")
-        services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
-        services = services.query('{} == {}'.format(ct, ct_value))
+        services = Data_Definition_Service.merge_service_types(params, services, service_types)
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
     ## 3
     def __get_undup_indv_total(params, services:DataFrame, service_types:DataFrame):
-        ct = params["scope"].get("control_type")
-        ct_value = params["scope"].get("control_type_value")
-        services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
-        services = services.query('{} == {}'.format(ct, ct_value))
+        services = Data_Definition_Service.merge_service_types(params, services, service_types)
         return services.drop_duplicates(subset = 'research_member_key', inplace = False)
     
     ## 4
