@@ -112,28 +112,28 @@ def get_report_big_numbers(request):
                 "reportId":1,
                 "reportDictId":1,
                 "dataDefId":1,
-                "name":"name_one",
+                "name":"services_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":2,
                 "reportDictId":2,
                 "dataDefId":2,
-                "name":"name_two",
+                "name":"undup_hh_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":3,
                 "reportDictId":3,
                 "dataDefId":3,
-                "name":"name_three",
+                "name":"undup_indv_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":4,
                 "reportDictId":4,
                 "dataDefId":4,
-                "name":"name_four",
+                "name":"services_per_uhh_avg",
                 "dataDefType":"type1"
             }
         ]
@@ -162,105 +162,105 @@ def get_report_ohio(request):
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":5,
-                "name":"name_one",
+                "name":"hh_wminor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":6,
-                "name":"name_two",
+                "name":"hh_wominor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":7,
-                "name":"name_three",
+                "name":"hh_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":8,
-                "name":"name_four",
+                "name":"indv_sen_hh_wminor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":9,
-                "name":"name_four",
+                "name":"indv_sen_hh_wominor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":10,
-                "name":"name_four",
+                "name":"indv_sen_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":11,
-                "name":"name_four",
+                "name":"indv_adult_hh_wminor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":12,
-                "name":"name_four",
+                "name":"indv_adult_hh_wominor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":13,
-                "name":"name_four",
+                "name":"indv_adult_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":14,
-                "name":"name_four",
+                "name":"indv_child_hh_wminor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":15,
-                "name":"name_four",
+                "name":"indv_child_hh_wominor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":16,
-                "name":"name_four",
+                "name":"indv_child_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":17,
-                "name":"name_four",
+                "name":"indv_total_hh_wminor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":18,
-                "name":"name_four",
+                "name":"indv_total_hh_wominor",
                 "dataDefType":"type1"
             },
             {
                 "reportId":1,
                 "reportDictId":2,
                 "dataDefId":19,
-                "name":"name_four",
+                "name":"indv_total",
                 "dataDefType":"type1"
             }
         ]
