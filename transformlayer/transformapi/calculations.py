@@ -83,6 +83,7 @@ def __get_undup_hh_total(params):
 
     """
     return len(ds.get_data_for_definition(2, params))
+    
 #data def 3
 def __get_undup_indv_total(params):
     """Calculate number of unique individuals. DataDef 3
@@ -118,37 +119,76 @@ def __get_services_per_uhh_avg(params):
 
 #Ohio Addin
 
+# data def 5
 def __get_hh_wminor(params):
-    pass
+    return len(ds.get_data_for_definition(5, params))
 
+# data def 6
 def __get_hh_wominor(params):
-    pass
+    return len(ds.get_data_for_definition(6, params))
+
+# data def 7
 def __get_hh_total(params):
-    pass
+    return len(ds.get_data_for_definition(7, params))
+
+# data def 8
 def __get_indv_sen_hh_wminor(params):
-    pass
+    seniors_wminors = ds.get_data_for_definition(8, params)
+    return seniors_wminors['served_seniors'].sum()
+
+# data def 9
 def __get_indv_sen_hh_wominor(params):
-    pass
+    seniors_wominors = ds.get_data_for_definition(9, params)
+    return seniors_wominors['served_seniors'].sum()
+
+# data def 10
 def __get_indv_sen_total(params):
-    pass
+    seniors = ds.get_data_for_definition(10, params)
+    return seniors['served_seniors'].sum()
+
+# data def 11
 def __get_indv_adult_hh_wminor(params):
-    pass
+    adults_wminors = ds.get_data_for_definition(11, params)
+    return adults_wminors['served_adults'].sum()
+
+# data def 12
 def __get_indv_adult_hh_wominor(params):
-    pass
+    adults_wominor = ds.get_data_for_definition(12, params)
+    return adults_wominor['served_adults'].sum()
+
+# data def 13
 def __get_indv_adult_total(params):
-    pass
+    adults = ds.get_data_for_definition(13, params)
+    return adults['served_adults'].sum()
+
+# data def 14
 def __get_indv_child_hh_wminor(params):
-    pass
+    children = ds.get_data_for_definition(14, params)
+    return children['served_children'].sum()
+
+# data def 15
 def __get_indv_child_hh_wominor(params):
-    pass
+    return 0
+
+# data def 16
 def __get_indv_child_total(params):
-    pass
+    children = ds.get_data_for_definition(16, params)
+    return children['served_children'].sum()
+
+# data def 17
 def __get_indv_total_hh_wminor(params):
-    pass
+    served = ds.get_data_for_definition(17, params)
+    return served['served_total'].sum()
+
+# data def 18
 def __get_indv_total_hh_wominor(params):
-    pass
+    served = ds.get_data_for_definition(18, params)
+    return served['served_total'].sum()
+
+# data def 19
 def __get_indv_total(params):
-    pass
+    served = ds.get_data_for_definition(19, params)
+    return served['served_total'].sum()
 
 #MOFC addin
 def __get_hh_wsenior(params):
