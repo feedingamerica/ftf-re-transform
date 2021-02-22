@@ -67,21 +67,21 @@ class CalculationsTestCase(unittest.TestCase):
         #might want to pass a connection to mock database in data_service.get_fact_service
         #make data service a singleton
         func = calc.data_calc_function_switcher[1]
-        result = func(sample_scope_1)
+        result = func(1,sample_scope_1)
         self.assertEqual(result, EXPECTED_RESULTS["services_total"]["mofc_value"])
     
     def test_get_undup_hh_total(self):
         func = calc.data_calc_function_switcher[2]
-        result = func(sample_scope_1)
+        result = func(2,sample_scope_1)
         self.assertEqual(result, EXPECTED_RESULTS["undup_hh_total"]["mofc_value"])
     
     def test_get_undup_indv_total(self):
         func = calc.data_calc_function_switcher[3]
-        result = func(sample_scope_1)
+        result = func(3,sample_scope_1)
         self.assertEqual(result, EXPECTED_RESULTS["undup_indv_total"]["mofc_value"])
     def test_get_services_per_uhh_avg(self):
         func = calc.data_calc_function_switcher[4]
-        result = func(sample_scope_1)
+        result = func(4,sample_scope_1)
         self.assertAlmostEqual(result, EXPECTED_RESULTS["services_per_uhh_avg"]["mofc_value"])
     
     #Ohio Addin
