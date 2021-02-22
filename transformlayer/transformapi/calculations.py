@@ -48,7 +48,7 @@ class CalculationDispatcher:
         for group in self.data_dict.values():
             for data_def in group:
                 func = data_calc_function_switcher[data_def["dataDefId"]]
-                result = func(self.params)
+                result = func(data_def["dataDefId"], self.params)
                 data_def["value"] = result
 
         return self.request["ReportInfo"]
@@ -56,7 +56,7 @@ class CalculationDispatcher:
 #Big Numbers(Default Engine MVP)
 
 #data def 1
-def __get_services_total(params):
+def __get_services_total(id, params):
     """Calculate number of services. DataDef 1
 
     Arguments:
@@ -66,13 +66,14 @@ def __get_services_total(params):
     num_services - number of unduplicated services
 
     """
-    return len(ds.get_data_for_definition(1, params))
+    return len(ds.get_data_for_definition(id, params))
 
 #data def 2
-def __get_undup_hh_total(params):
+def __get_undup_hh_total(id, params):
     """Calculate number of unique families. DataDef 2
 
     Arguments:
+    id - data definiton id
     params - a dictionary of values to scope the queries
 
     Modifies:
@@ -82,12 +83,14 @@ def __get_undup_hh_total(params):
     num_familes - number of unique families
 
     """
-    return len(ds.get_data_for_definition(2, params))
+    return len(ds.get_data_for_definition(id, params))
+    
 #data def 3
-def __get_undup_indv_total(params):
+def __get_undup_indv_total(id, params):
     """Calculate number of unique individuals. DataDef 3
 
     Arguments:
+    id - data definiton id
     params - a dictionary of values to scope the queries
 
     Modifies:
@@ -97,13 +100,14 @@ def __get_undup_indv_total(params):
     num_familes - number of unique individuals
 
     """
-    return len(ds.get_data_for_definition(3, params))
+    return len(ds.get_data_for_definition(id, params))
 
 #data def 4
-def __get_services_per_uhh_avg(params):
+def __get_services_per_uhh_avg(id, params):
     """Calculate number of services per family DataDef 4
 
     Arguments:
+    id - data definiton id
     params - a dictionary of values to scope the queries
 
     Modifies:
@@ -113,51 +117,109 @@ def __get_services_per_uhh_avg(params):
     num_services_avg - average number of services per family
 
     """
-    services, families = ds.get_data_for_definition(4, params)
+    services, families = ds.get_data_for_definition(id, params)
     return len(services)/len(families)
 
 #Ohio Addin
 
-def __get_hh_wminor(params):
-    pass
+# data def 5, 6, 7
+def __get_hh(id, params):
+    """Calculate number of households served DataDef 5, 6, & 7
 
-def __get_hh_wominor(params):
-    pass
-def __get_hh_total(params):
-    pass
-def __get_indv_sen_hh_wminor(params):
-    pass
-def __get_indv_sen_hh_wominor(params):
-    pass
-def __get_indv_sen_total(params):
-    pass
-def __get_indv_adult_hh_wminor(params):
-    pass
-def __get_indv_adult_hh_wominor(params):
-    pass
-def __get_indv_adult_total(params):
-    pass
-def __get_indv_child_hh_wminor(params):
-    pass
-def __get_indv_child_hh_wominor(params):
-    pass
-def __get_indv_child_total(params):
-    pass
-def __get_indv_total_hh_wminor(params):
-    pass
-def __get_indv_total_hh_wominor(params):
-    pass
-def __get_indv_total(params):
-    pass
+    Arguments:
+    id - data definiton id
+    params - a dictionary of values to scope the queries
+
+    Modifies:
+    Nothing
+
+    Returns: num_households
+    num_households - number of households served
+
+    """
+    return len(ds.get_data_for_definition(id, params))
+
+# data def 8, 9, 10
+def __get_indv_senior(id, params):
+    """Calculate number of seniors served DataDef 8, 9, & 10
+
+    Arguments:
+    id - data definiton id
+    params - a dictionary of values to scope the queries
+
+    Modifies:
+    Nothing
+
+    Returns: num_seniors
+    num_seniors - number of seniors served
+
+    """
+    return ds.get_data_for_definition(id, params)['served_seniors'].sum()
+
+# data def 11, 12, 13
+def __get_indv_adult(id, params):
+    """Calculate number of adults served DataDef 11, 12, & 13
+
+    Arguments:
+    id - data definiton id
+    params - a dictionary of values to scope the queries
+
+    Modifies:
+    Nothing
+
+    Returns: num_adults
+    num_adults - number of adults served
+
+    """
+    return ds.get_data_for_definition(id, params)['served_adults'].sum()
+
+# data def 14, 16
+def __get_indv_child(id, params):
+    """Calculate number of children served DataDef 14 & 16
+
+    Arguments:
+    id - data definiton id
+    params - a dictionary of values to scope the queries
+
+    Modifies:
+    Nothing
+
+    Returns: num_children
+    num_children - number of children served
+
+    """
+    return ds.get_data_for_definition(id, params)['served_children'].sum()
+
+# data def 15
+def __get_indv_child_hh_wominor(id, params):
+    return 0
+
+# data def 17, 18, 19
+def __get_indv_total(id, params):
+    """Calculate number of people served DataDef 17, 18, & 19
+
+    Arguments:
+    id - data definiton id
+    params - a dictionary of values to scope the queries
+
+    Modifies:
+    Nothing
+
+    Returns: num_served
+    num_served - number of people served
+
+    """
+    served = ds.get_data_for_definition(id, params)
+    return served['served_total'].sum()
 
 #MOFC addin
-def __get_hh_wsenior(params):
+def __get_hh_wsenior(id, params):
     pass
-def __get_hh_wosenior(params):
+def __get_hh_wosenior(id, params):
     pass
-def __get_hh_grandparent(params):
+def __get_hh_grandparent(id, params):
     pass
-        
+
 
     ## Data Defintion Switcher
     # usage:
@@ -168,20 +230,20 @@ data_calc_function_switcher = {
         2: __get_undup_hh_total,
         3: __get_undup_indv_total,
         4: __get_services_per_uhh_avg,
-        5: __get_hh_wminor,
-        6: __get_hh_wominor,
-        7: __get_hh_total,
-        8: __get_indv_sen_hh_wminor,
-        9: __get_indv_sen_hh_wominor,
-        10: __get_indv_sen_total,
-        11: __get_indv_adult_hh_wminor,
-        12: __get_indv_adult_hh_wominor,
-        13: __get_indv_adult_total,
-        14: __get_indv_child_hh_wminor,
+        5: __get_hh,
+        6: __get_hh,
+        7: __get_hh,
+        8: __get_indv_senior,
+        9: __get_indv_senior,
+        10: __get_indv_senior,
+        11: __get_indv_adult,
+        12: __get_indv_adult,
+        13: __get_indv_adult,
+        14: __get_indv_child,
         15: __get_indv_child_hh_wominor,
-        16: __get_indv_child_total,
-        17: __get_indv_total_hh_wminor,
-        18: __get_indv_total_hh_wominor,
+        16: __get_indv_child,
+        17: __get_indv_total,
+        18: __get_indv_total,
         19: __get_indv_total,
         20: __get_hh_wsenior,
         21: __get_hh_wosenior,

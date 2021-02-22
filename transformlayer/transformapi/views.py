@@ -111,7 +111,7 @@ def test_data_service(request, id):
     print(data)
     return HttpResponse(str(id) + "\t" + str(data))
 
-def get_report(request):
+def get_report_big_numbers(request):
     input_dict = {
         "Scope": {
             "startDate":"01/01/2019",
@@ -126,28 +126,155 @@ def get_report(request):
                 "reportId":1,
                 "reportDictId":1,
                 "dataDefId":1,
-                "name":"name_one",
+                "name":"services_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":2,
                 "reportDictId":2,
                 "dataDefId":2,
-                "name":"name_two",
+                "name":"undup_hh_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":3,
                 "reportDictId":3,
                 "dataDefId":3,
-                "name":"name_three",
+                "name":"undup_indv_total",
                 "dataDefType":"type1"
             },
             {
                 "reportId":4,
                 "reportDictId":4,
                 "dataDefId":4,
-                "name":"name_four",
+                "name":"services_per_uhh_avg",
+                "dataDefType":"type1"
+            }
+        ]
+    }
+
+    params = parse_request(input_dict)
+    cd = CalculationDispatcher(params)
+    cd.run_calculations()
+
+    context = { 'report_output': format_dict(cd.request) }
+    print_dict(input_dict)
+    return render(request, 'transformapi/get-report.html', context)
+
+def get_report_ohio(request):
+    input_dict = {
+        "Scope": {
+            "startDate":"01/01/2019",
+            "endDate":"12/31/2019",
+            "scope_field":"fb_id",
+            "scope_field_value":21,
+            "control_type_field":"dummy_is_grocery_service",
+            "control_type_value":1
+        },
+        "ReportInfo": [
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":5,
+                "name":"hh_wminor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":6,
+                "name":"hh_wominor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":7,
+                "name":"hh_total",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":8,
+                "name":"indv_sen_hh_wminor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":9,
+                "name":"indv_sen_hh_wominor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":10,
+                "name":"indv_sen_total",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":11,
+                "name":"indv_adult_hh_wminor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":12,
+                "name":"indv_adult_hh_wominor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":13,
+                "name":"indv_adult_total",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":14,
+                "name":"indv_child_hh_wminor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":15,
+                "name":"indv_child_hh_wominor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":16,
+                "name":"indv_child_total",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":17,
+                "name":"indv_total_hh_wminor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":18,
+                "name":"indv_total_hh_wominor",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":19,
+                "name":"indv_total",
                 "dataDefType":"type1"
             }
         ]
