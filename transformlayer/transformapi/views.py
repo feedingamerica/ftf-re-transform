@@ -61,8 +61,8 @@ def test_endpoint_2(request):
         ]
     }
     params = parse_request(sample_dict)
-    num_services = calc.get_services_total(params)
-    num_families = calc.get_undup_hh_total(params)
+    num_services = calc.__get_services_total(params)
+    num_families = calc.__get_undup_hh_total(params)
 
     response = "Number of unduplicated services " + str(num_services)
     response += "\n"
