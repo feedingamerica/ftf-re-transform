@@ -93,8 +93,12 @@ class Data_Service:
     ####    Returns: services
     ####        inidividuals - unduplicated individuals data table
     def __get_undup_indv(params):
+        conn = connections['default']
         services = Data_Service.fact_services(params)
-        return services.drop_duplicates(subset = 'research_member_key', inplace = False)
+        query_individuals = "SELECT research_service_key, research_member_key FROM fact_service_members"
+        individuals = pd.read_sql(query_individuals, conn)
+        services = pd.merge(services,individuals, on = 'research_service_key', how = 'left')
+        return services.drop_duplicates(subset = 'research_member_key_y', inplace = False)
     
     ## DataFrames to fulfill Data Definiton 4
     ####    Returns: (services, families)
