@@ -52,25 +52,10 @@ class CalculationDispatcher:
                 data_def["value"] = result
 
         return self.request["ReportInfo"]
-        
+
 #Big Numbers(Default Engine MVP)
-
-#data def 1
-def __get_services_total(id, params):
-    """Calculate number of services. DataDef 1
-
-    Arguments:
-    params - a dictionary of values to scope the queries
-
-    Returns: num_services
-    num_services - number of unduplicated services
-
-    """
-    return len(ds.get_data_for_definition(id, params))
-
-#data def 2
-def __get_undup_hh_total(id, params):
-    """Calculate number of unique families. DataDef 2
+def __get_total_hh_services(id, params):
+    """Calculate number of households/individuals served (based on filter) DataDef 1, 2, 5, 6, 7, 20, 21, & 22
 
     Arguments:
     id - data definiton id
@@ -79,8 +64,8 @@ def __get_undup_hh_total(id, params):
     Modifies:
     Nothing
 
-    Returns: num_familes
-    num_familes - number of unique families
+    Returns: num_households
+    num_households - number of households served for a specific filter based on id
 
     """
     return len(ds.get_data_for_definition(id, params))
@@ -120,25 +105,7 @@ def __get_services_per_uhh_avg(id, params):
     services, families = ds.get_data_for_definition(id, params)
     return len(services)/len(families)
 
-#Ohio Addin
-
-# data def 5, 6, 7
-def __get_hh(id, params):
-    """Calculate number of households served DataDef 5, 6, & 7
-
-    Arguments:
-    id - data definiton id
-    params - a dictionary of values to scope the queries
-
-    Modifies:
-    Nothing
-
-    Returns: num_households
-    num_households - number of households served
-
-    """
-    return len(ds.get_data_for_definition(id, params))
-
+## Ohio Addin
 # data def 8, 9, 10
 def __get_indv_senior(id, params):
     """Calculate number of seniors served DataDef 8, 9, & 10
@@ -212,27 +179,19 @@ def __get_indv_total(id, params):
     served = ds.get_data_for_definition(id, params)
     return served['served_total'].sum()
 
-#MOFC addin
-def __get_hh_wsenior(id, params):
-    pass
-def __get_hh_wosenior(id, params):
-    pass
-def __get_hh_grandparent(id, params):
-    pass
-
 
     ## Data Defintion Switcher
     # usage:
     #   func = __switcher.get(id)
     #   func()
 data_calc_function_switcher = {
-        1: __get_services_total,
-        2: __get_undup_hh_total,
+        1: __get_total_hh_services,
+        2: __get_total_hh_services,
         3: __get_undup_indv_total,
         4: __get_services_per_uhh_avg,
-        5: __get_hh,
-        6: __get_hh,
-        7: __get_hh,
+        5: __get_total_hh_services,
+        6: __get_total_hh_services,
+        7: __get_total_hh_services,
         8: __get_indv_senior,
         9: __get_indv_senior,
         10: __get_indv_senior,
@@ -245,15 +204,7 @@ data_calc_function_switcher = {
         17: __get_indv_total,
         18: __get_indv_total,
         19: __get_indv_total,
-        20: __get_hh_wsenior,
-        21: __get_hh_wosenior,
-        22: __get_hh_grandparent,
+        20: __get_total_hh_services,
+        21: __get_total_hh_services,
+        22: __get_total_hh_services,
     }
-
-def main():
-    print(ds.__date_str_to_int("6/16/1998"))
-
-
-if __name__=="__main__":
-    main()
-

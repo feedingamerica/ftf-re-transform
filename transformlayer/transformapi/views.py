@@ -287,3 +287,46 @@ def get_report_ohio(request):
     context = { 'report_output': format_dict(cd.request) }
     print_dict(input_dict)
     return render(request, 'transformapi/get-report.html', context)
+
+def get_report_mofc(request):
+    input_dict = {
+        "Scope": {
+            "startDate":"01/01/2019",
+            "endDate":"12/31/2019",
+            "scope_field":"fb_id",
+            "scope_field_value":21,
+            "control_type_field":"dummy_is_grocery_service",
+            "control_type_value":1
+        },
+        "ReportInfo": [
+            {
+                "reportId":1,
+                "reportDictId":3,
+                "dataDefId":20,
+                "name":"hh_wsenior",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":3,
+                "dataDefId":21,
+                "name":"hh_wosenior",
+                "dataDefType":"type1"
+            },
+            {
+                "reportId":1,
+                "reportDictId":3,
+                "dataDefId":22,
+                "name":"hh_grandparent",
+                "dataDefType":"type1"
+            }
+        ]
+    }
+
+    params = parse_request(input_dict)
+    cd = CalculationDispatcher(params)
+    cd.run_calculations()
+
+    context = { 'report_output': format_dict(cd.request) }
+    print_dict(input_dict)
+    return render(request, 'transformapi/get-report.html', context)
