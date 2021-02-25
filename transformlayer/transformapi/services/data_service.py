@@ -3,8 +3,12 @@ import dateutil.parser as parser
 import pandas as pd
 from django.db import connections
 
+SCOPE_HIERARCHY = "hierarchy"
+SCOPE_GEOGRAPHY = "geography"
+
 class Data_Service:
     __fact_services:DataFrame = None
+    __scope:str = None
     ##  getter and setter for fact_services based on the scope "hierarchy" or "geography" (also sets related service_types if None)
     ##  Columns always in services:
     ##      research_service_key
@@ -20,9 +24,9 @@ class Data_Service:
     ##      hierarchy_id - if scope_type is "hierarchy"
     ##      dimgeo_id - if scope_type is "geography"
     def fact_services(params):
-        if Data_Service.__fact_services is None:
+        if Data_Service.__fact_services is None or params["Scope"]["scope_type"] != Data_Service.__scope:
+            Data_Service.__scope = params["Scope"]["scope_type"]
             Data_Service.__fact_services = Data_Service.__get_fact_services(params)
-            
         return Data_Service.__fact_services
 
     ## returns DataFrame for a specific data definition
@@ -98,7 +102,8 @@ class Data_Service:
         query_individuals = "SELECT research_service_key, research_member_key FROM fact_service_members"
         individuals = pd.read_sql(query_individuals, conn)
         services = pd.merge(services,individuals, on = 'research_service_key', how = 'left')
-        return services.drop_duplicates(subset = 'research_member_key', inplace = False)
+        #research_member_key_y is not a typo, occurs due to overlapping column names in merge
+        return services.drop_duplicates(subset = 'research_member_key_y', inplace = False)
     
     ## DataFrames to fulfill Data Definiton 4
     ####    Returns: (services, families)
