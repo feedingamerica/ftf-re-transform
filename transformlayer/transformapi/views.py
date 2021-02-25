@@ -330,3 +330,55 @@ def get_report_mofc(request):
     context = { 'report_output': format_dict(cd.request) }
     print_dict(input_dict)
     return render(request, 'transformapi/get-report.html', context)
+
+
+
+def get_demo1_reports(request):
+    input_dict1 = {
+        "Scope": {
+            "startDate":"01/01/2019",
+            "endDate":"12/31/2019",
+            "scope_field":"fb_id",
+            "scope_field_value":21,
+            "control_type_field":"dummy_is_grocery_service",
+            "control_type_value":1
+        },
+        "ReportInfo": [
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":5,
+                "name":"hh_wminor",
+                "dataDefType":"type1"
+            },
+        ]
+    }
+
+    input_dict2 = {
+        "Scope": {
+            "startDate":"01/01/2019",
+            "endDate":"12/31/2019",
+            "scope_type": "geography",
+            "scope_field":"fips_cnty",
+            "scope_field_value":39049,
+            "control_type_field":"dummy_is_grocery_service",
+            "control_type_value":1
+        },
+        "ReportInfo": [
+            {
+                "reportId":1,
+                "reportDictId":2,
+                "dataDefId":5,
+                "name":"hh_wminor",
+                "dataDefType":"type1"
+            },
+        ]
+    }
+
+    params = parse_request(input_dict1)
+    cd = CalculationDispatcher(params)
+    cd.run_calculations()
+
+    context = { 'report_output': format_dict(cd.request) }
+    print_dict(input_dict)
+    return render(request, 'transformapi/get-report.html', context)

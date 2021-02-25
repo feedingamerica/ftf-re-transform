@@ -55,7 +55,7 @@ EXPECTED_RESULTS = read_expected()
 class CalculationsTestCase(unittest.TestCase):
     # @classmethod
     # def setUpClass(cls):
-    #     cls.fact_services_scope1 = ds.fact_services(sample_scope_1)
+    #     cls.fact_services_scope1 = ds.fact_services(sample_scope_2)
     #     #ds.__fact_services = None
     #     #cls.fact_services_scope2 = ds.fact_services(sample_scope_2)
     #     #ds.__fact_services = None
@@ -67,108 +67,117 @@ class CalculationsTestCase(unittest.TestCase):
         #might want to pass a connection to mock database in data_service.get_fact_service
         #make data service a singleton
         func = calc.data_calc_function_switcher[1]
-        result = func(1,sample_scope_1)
-        self.assertEqual(result, EXPECTED_RESULTS["services_total"]["mofc_value"])
+        result = func(1,sample_scope_2)
+        self.assertEqual(result, EXPECTED_RESULTS["services_total"]["franklin_value"])
     
     def test_get_undup_hh_total(self):
         func = calc.data_calc_function_switcher[2]
-        result = func(2,sample_scope_1)
-        self.assertEqual(result, EXPECTED_RESULTS["undup_hh_total"]["mofc_value"])
+        result = func(2,sample_scope_2)
+        self.assertEqual(result, EXPECTED_RESULTS["undup_hh_total"]["franklin_value"])
     
     @unittest.skip
     def test_get_undup_indv_total(self):
         func = calc.data_calc_function_switcher[3]
-        result = func(3,sample_scope_1)
-        self.assertEqual(result, EXPECTED_RESULTS["undup_indv_total"]["mofc_value"])
+        result = func(3,sample_scope_2)
+        self.assertEqual(result, EXPECTED_RESULTS["undup_indv_total"]["franklin_value"])
     def test_get_services_per_uhh_avg(self):
         func = calc.data_calc_function_switcher[4]
-        result = func(4,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["services_per_uhh_avg"]["mofc_value"])
+        result = func(4,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["services_per_uhh_avg"]["franklin_value"])
     
     #Ohio Addin
     def test_get_hh_wminor(self):
         func = calc.data_calc_function_switcher[5]
-        result = func(5,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_wminor"]["mofc_value"])
-        pass
+        result = func(5,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_wminor"]["franklin_value"])
+        
 
     def test_get_hh_wominor(self):
         func = calc.data_calc_function_switcher[6]
-        result = func(6,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_wominor"]["mofc_value"])
-        pass
+        result = func(6,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_wominor"]["franklin_value"])
+        
     def test_get_hh_total(self):
         func = calc.data_calc_function_switcher[7]
-        result = func(7,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_total"]["mofc_value"])
-        pass
+        result = func(7,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_total"]["franklin_value"])
+        
     def test_get_indv_sen_hh_wminor(self):
         func = calc.data_calc_function_switcher[8]
-        result = func(8,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_sen_hh_wminor"]["mofc_value"])
-        pass
+        result = func(8,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_sen_hh_wminor"]["franklin_value"])
+        
     def test_get_indv_sen_hh_wominor(self):
         func = calc.data_calc_function_switcher[9]
-        result = func(9,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_sen_hh_wominor"]["mofc_value"])
-        pass
+        result = func(9,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_sen_hh_wominor"]["franklin_value"])
+        
     def test_get_indv_sen_total(self):
         func = calc.data_calc_function_switcher[10]
-        result = func(10,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_sen_total"]["mofc_value"])
-        pass
+        result = func(10,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_sen_total"]["franklin_value"])
+        
     def test_get_indv_adult_hh_wminor(self):
         func = calc.data_calc_function_switcher[11]
-        result = func(11,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_adult_hh_wminor"]["mofc_value"])
-        pass
+        result = func(11,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_adult_hh_wminor"]["franklin_value"])
+        
     def test_get_indv_adult_hh_wominor(self):
         func = calc.data_calc_function_switcher[12]
-        result = func(12,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_adult_hh_wominor"]["mofc_value"])
-        pass
+        result = func(12,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_adult_hh_wominor"]["franklin_value"])
+        
     def test_get_indv_adult_total(self):
         func = calc.data_calc_function_switcher[13]
-        result = func(13,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_adult_total"]["mofc_value"])
-        pass
+        result = func(13,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_adult_total"]["franklin_value"])
+        
     def test_get_indv_child_hh_wminor(self):
         func = calc.data_calc_function_switcher[14]
-        result = func(14,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_child_hh_wminor"]["mofc_value"])
-        pass
+        result = func(14,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_child_hh_wminor"]["franklin_value"])
+        
     def test_get_indv_child_hh_wominor(self):
         func = calc.data_calc_function_switcher[15]
-        result = func(15,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_child_hh_wominor"]["mofc_value"])
-        pass
+        result = func(15,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_child_hh_wominor"]["franklin_value"])
+        
     def test_get_indv_child_total(self):
         func = calc.data_calc_function_switcher[16]
-        result = func(16,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_child_total"]["mofc_value"])
-        pass
+        result = func(16,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_child_total"]["franklin_value"])
+        
     def test_get_indv_total_hh_wminor(self):
         func = calc.data_calc_function_switcher[17]
-        result = func(17,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_total_hh_wminor"]["mofc_value"])
-        pass
+        result = func(17,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_total_hh_wminor"]["franklin_value"])
+        
     def test_get_indv_total_hh_wominor(self):
         func = calc.data_calc_function_switcher[18]
-        result = func(18,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_total_hh_wominor"]["mofc_value"])
-        pass
+        result = func(18,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_total_hh_wominor"]["franklin_value"])
+        
     def test_get_indv_total(self):
         func = calc.data_calc_function_switcher[19]
-        result = func(19,sample_scope_1)
-        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_total"]["mofc_value"])
-        pass
+        result = func(19,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["indv_total"]["franklin_value"])
+        
     # #MOFC addin
-    # def test_get_hh_wsenior(self):
-    #     pass
-    # def test_get_hh_wosenior(self):
-    #     pass
-    # def test_get_hh_grandparent(self):
-    #     pass
+    def test_get_hh_wsenior(self):
+        func = calc.data_calc_function_switcher[20]
+        result = func(20,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_wsenior"]["franklin_value"])
+        
+    def test_get_hh_wosenior(self):
+        func = calc.data_calc_function_switcher[21]
+        result = func(21,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_wosenior"]["franklin_value"])
+        
+    def test_get_hh_grandparent(self):
+        func = calc.data_calc_function_switcher[22]
+        result = func(22,sample_scope_2)
+        self.assertAlmostEqual(result, EXPECTED_RESULTS["hh_grandparent"]["franklin_value"])
+        
 
 
 if __name__ == '__main__':
