@@ -55,7 +55,7 @@ class CalculationDispatcher:
 
 #Big Numbers(Default Engine MVP)
 def __get_total_hh_services(id, params):
-    """Calculate number of households/individuals served (based on filter) DataDef 1, 2, 5, 6, 7, 20, 21, & 22
+    """Calculate number of households/individuals served (based on filter) DataDef 1, 2, 3, 5, 6, 7, 20, 21, & 22
 
     Arguments:
     id - data definiton id
@@ -66,23 +66,6 @@ def __get_total_hh_services(id, params):
 
     Returns: num_households
     num_households - number of households served for a specific filter based on id
-
-    """
-    return len(ds.get_data_for_definition(id, params))
-    
-#data def 3
-def __get_undup_indv_total(id, params):
-    """Calculate number of unique individuals. DataDef 3
-
-    Arguments:
-    id - data definiton id
-    params - a dictionary of values to scope the queries
-
-    Modifies:
-    Nothing
-
-    Returns: num_indv
-    num_familes - number of unique individuals
 
     """
     return len(ds.get_data_for_definition(id, params))
@@ -176,8 +159,7 @@ def __get_indv_total(id, params):
     num_served - number of people served
 
     """
-    served = ds.get_data_for_definition(id, params)
-    return served['served_total'].sum()
+    return ds.get_data_for_definition(id, params)['served_total'].sum()
 
 
     ## Data Defintion Switcher
@@ -187,7 +169,7 @@ def __get_indv_total(id, params):
 data_calc_function_switcher = {
         1: __get_total_hh_services,
         2: __get_total_hh_services,
-        3: __get_undup_indv_total,
+        3: __get_total_hh_services,
         4: __get_services_per_uhh_avg,
         5: __get_total_hh_services,
         6: __get_total_hh_services,
