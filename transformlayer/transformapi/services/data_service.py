@@ -3,6 +3,8 @@ import dateutil.parser as parser
 import pandas as pd
 from django.db import connections
 
+import copy
+
 SCOPE_HIERARCHY = "hierarchy"
 SCOPE_GEOGRAPHY = "geography"
 
@@ -24,8 +26,8 @@ class Data_Service:
     ##      hierarchy_id - if scope_type is "hierarchy"
     ##      dimgeo_id - if scope_type is "geography"
     def fact_services(params):
-        if Data_Service.__fact_services is None or params["Scope"]["scope_type"] != Data_Service.__scope:
-            Data_Service.__scope = params["Scope"]["scope_type"]
+        if Data_Service.__fact_services is None or params["Scope"] != Data_Service.__scope:
+            Data_Service.__scope = copy.deepcopy(params["Scope"])
             Data_Service.__fact_services = Data_Service.__get_fact_services(params)
         return Data_Service.__fact_services
 
