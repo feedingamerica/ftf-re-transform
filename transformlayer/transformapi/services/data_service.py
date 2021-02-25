@@ -98,7 +98,7 @@ class Data_Service:
         query_individuals = "SELECT research_service_key, research_member_key FROM fact_service_members"
         individuals = pd.read_sql(query_individuals, conn)
         services = pd.merge(services,individuals, on = 'research_service_key', how = 'left')
-        return services.drop_duplicates(subset = 'research_member_key_y', inplace = False)
+        return services.drop_duplicates(subset = 'research_member_key', inplace = False)
     
     ## DataFrames to fulfill Data Definiton 4
     ####    Returns: (services, families)
