@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.db import connections
 from .library import parse_request
+from .calculations import CalculationDispatcher
 from .services.data_service import Data_Service
 from . import calculations as calc
 from .calculations import CalculationDispatcher
@@ -60,7 +61,7 @@ def test_endpoint_2(request):
             }
         ]
     }
-    params = parse_request(sample_dict)
+    params = CalculationDispatcher.parse_request(sample_dict)
     num_services = calc.__get_services_total(params)
     num_families = calc.__get_undup_hh_total(params)
 
@@ -105,7 +106,7 @@ def test_data_service(request, id):
             }
         ]
     }
-    params = parse_request(sample_dict)
+    params = CalculationDispatcher.parse_request(sample_dict)
 
     data = Data_Service.get_data_for_definition(id, params)
     print(data)
@@ -153,8 +154,8 @@ def get_report_big_numbers(request):
         ]
     }
 
-    params = parse_request(input_dict)
-    cd = CalculationDispatcher(params)
+    # params = parse_request(input_dict)
+    cd = CalculationDispatcher(input_dict)
     cd.run_calculations()
 
     context = { 'report_output': format_dict(cd.request) }
@@ -280,8 +281,8 @@ def get_report_ohio(request):
         ]
     }
 
-    params = parse_request(input_dict)
-    cd = CalculationDispatcher(params)
+    # params = parse_request(input_dict)
+    cd = CalculationDispatcher(input_dict)
     cd.run_calculations()
 
     context = { 'report_output': format_dict(cd.request) }
@@ -323,8 +324,8 @@ def get_report_mofc(request):
         ]
     }
 
-    params = parse_request(input_dict)
-    cd = CalculationDispatcher(params)
+    # params = parse_request(input_dict)
+    cd = CalculationDispatcher(input_dict)
     cd.run_calculations()
 
     context = { 'report_output': format_dict(cd.request) }
@@ -386,8 +387,8 @@ def get_demo1_mofc(request):
             input_dict["ReportInfo"].append(data_def)
     
 
-    params = parse_request(input_dict)
-    cd = CalculationDispatcher(params)
+    # params = parse_request(input_dict)
+    cd = CalculationDispatcher(input_dict)
     cd.run_calculations()
 
     context = { 'report_output': format_dict(cd.request)}
@@ -446,8 +447,8 @@ def get_demo1_franklin(request):
             input_dict["ReportInfo"].append(data_def)
     
 
-    params = parse_request(input_dict)
-    cd = CalculationDispatcher(params)
+    # params = parse_request(input_dict)
+    cd = CalculationDispatcher(input_dict)
     cd.run_calculations()
 
     context = { 'report_output': format_dict(cd.request)}

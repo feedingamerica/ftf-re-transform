@@ -6,12 +6,16 @@ DEFAULT_CTRL_VAL = "1"
 
 class CalculationDispatcher:
     def __init__(self, request):
-        self.request = request #don't modify directly
+
+        # now on construction, it will automatically run parse request on the input request, so theres no extra in between step
+        self.request = self.parse_request(request)
+        
+        # self.request = request // don't modify directly
+
         data_list = request["ReportInfo"]
         self.params = request
         self.data_dict = CalculationDispatcher.__group_by_data_def(data_list)
         
-
     @staticmethod
     def __group_by_data_def(data_list):
         """Returns dict of data defs grouped by reportDictid and sorted by dataDefid
@@ -52,6 +56,26 @@ class CalculationDispatcher:
                 data_def["value"] = result
 
         return self.request["ReportInfo"]
+
+    # static callable parse request
+    @staticmethod
+    def parse_request(input_dict):
+        # Setting the scope type
+        scope_field = input_dict["Scope"]["scope_field"]
+        if scope_field.startswith("fip"):
+            input_dict["Scope"]["scope_type"] = "geography"
+        else:
+            input_dict["Scope"]["scope_type"] = "hierarchy"
+        
+        # Setting the control type
+        if "control_type_field" not in input_dict["Scope"]:
+            input_dict["Scope"]["control_type_field"] = "dummy_is_grocery_service"
+
+        # Setting the control type value
+        if "control_type_value" not in input_dict["Scope"]:
+            input_dict["Scope"]["control_type_value"] = 1
+
+        return input_dict
 
 #Big Numbers(Default Engine MVP)
 def __get_total_hh_services(id, params):
