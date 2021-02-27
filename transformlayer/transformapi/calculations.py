@@ -9,7 +9,7 @@ class CalculationDispatcher:
 
         # now on construction, it will automatically run parse request on the input request, so theres no extra in between step
         self.request = self.parse_request(request)
-        
+
         # self.request = request // don't modify directly
 
         data_list = request["ReportInfo"]
@@ -186,10 +186,10 @@ def __get_indv_total(id, params):
     return ds.get_data_for_definition(id, params)['served_total'].sum()
 
 
-    ## Data Defintion Switcher
-    # usage:
-    #   func = __switcher.get(id)
-    #   func()
+## Data Defintion Switcher
+# usage:
+#   func = data_calc_function_switcher.get(id)
+#   func()
 data_calc_function_switcher = {
         1: __get_total_hh_services,
         2: __get_total_hh_services,

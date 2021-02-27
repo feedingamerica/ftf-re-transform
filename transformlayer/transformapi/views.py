@@ -8,10 +8,6 @@ from .services.data_service import Data_Service
 from . import calculations as calc
 from .calculations import CalculationDispatcher
 from print_dict import print_dict, format_dict
-#from .calculations import get_services_total
-
-def test_endpoint_1(request):
-    return HttpResponse('This is a test. Hello World!')
 
 def test_endpoint_2(request):
     sample_dict = {
@@ -346,8 +342,6 @@ def get_demo1_mofc(request):
         },
         "ReportInfo": []
     }
-
-    
 
     data_def_names = [
         "services_total",

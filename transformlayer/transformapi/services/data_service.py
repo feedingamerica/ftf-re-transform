@@ -101,7 +101,6 @@ class Data_Service:
     ####        families - unduplicated families data table
     def __get_undup_hh(params):
         services = Data_Service.fact_services(params)
-        print (services) 
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
     ## DataFrame to fulfill Data Definiton 3
@@ -115,7 +114,7 @@ class Data_Service:
     ####    Returns: (services, families)
     ####        services - fact service data table
     ####        families - unduplicated families data table
-    def fact_services_and_uhh(params):
+    def __fact_services_and_uhh(params):
         return Data_Service.__get_num_services(params), Data_Service.__get_undup_hh(params)
     
     ## DataFrame to fulfill Data Definitions 5, 14, 16, 17
@@ -193,13 +192,13 @@ class Data_Service:
 
     ## Data Defintion Switcher
     # usage:
-    #   func = __switcher.get(id)
+    #   func = data_def_function_switcher.get(id)
     #   func()
     data_def_function_switcher = {
             1: __get_num_services,
             2: __get_undup_hh,
             3: __get_undup_indv,
-            4: fact_services_and_uhh,
+            4: __fact_services_and_uhh,
             5: __get_wminor,
             6: __get_wominor,
             7: __get_num_services,
