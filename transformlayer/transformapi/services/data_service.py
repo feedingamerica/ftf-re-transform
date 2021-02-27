@@ -54,10 +54,11 @@ class Data_Service:
             right1 = "id"
 
         query = """SELECT fs.research_service_key, fs.{left1}, fs.service_status, fs.service_id,
-        fs.research_family_key, fs.research_member_key, fs.served_children, fs.served_adults, fs.served_seniors, fs.served_total
+        fs.research_family_key, fs.served_children, fs.served_adults, fs.served_seniors, fs.served_total, fsm.research_member_key
         FROM fact_services AS fs
         LEFT JOIN {t1} AS t1 ON fs.{left1} = t1.{right1}
         LEFT JOIN dim_service_statuses ON fs.service_status = dim_service_statuses.status 
+        LEFT JOIN fact_service_members AS fsm ON fs.research_service_key = fsm.research_service_key
         """
         where_stmt = "WHERE fs.service_status = 17"
         where_stmt += (" AND t1.{} = {}".format(params["Scope"]["scope_field"],
@@ -87,6 +88,13 @@ class Data_Service:
         dt = parser.parse(date,dayfirst = False)
         date_int = (10000*dt.year)+ (100 * dt.month) + dt.day 
         return date_int
+
+    ## DataFrame to fulfill Data Definition 1
+    ####    Returns: services
+    ####        families - unduplicated families data table
+    def __get_num_services(params):
+        services = Data_Service.fact_services(params)
+        return services.drop_duplicates(subset = 'research_service_key', inplace = False)
     
     ## DataFrame to fulfill Data Definition 2
     ####    Returns: services
@@ -100,78 +108,70 @@ class Data_Service:
     ####    Returns: services
     ####        inidividuals - unduplicated individuals data table
     def __get_undup_indv(params):
-        conn = connections['default']
         services = Data_Service.fact_services(params)
-        start_date = Data_Service.__date_str_to_int(params["Scope"]["startDate"])
-        end_date = Data_Service.__date_str_to_int(params["Scope"]["endDate"])
-        query_individuals = """SELECT mem.research_service_key, mem.research_member_key FROM fact_service_members as mem, fact_services as serv
-        where mem.research_service_key = serv.research_service_key and serv.date>={} and serv.date<={}""".format(start_date,end_date)
-        individuals = pd.read_sql(query_individuals, conn)
-        services = pd.merge(services,individuals, on = 'research_service_key', how = 'left')
-        #research_member_key_y is not a typo, occurs due to overlapping column names in merge
-        return services.drop_duplicates(subset = 'research_member_key_y', inplace = False)
+        return services.drop_duplicates(subset = 'research_member_key', inplace = False)
     
     ## DataFrames to fulfill Data Definiton 4
     ####    Returns: (services, families)
     ####        services - fact service data table
     ####        families - unduplicated families data table
     def fact_services_and_uhh(params):
-        return Data_Service.fact_services(params), Data_Service.__get_undup_hh(params)
+        return Data_Service.__get_num_services(params), Data_Service.__get_undup_hh(params)
     
     ## DataFrame to fulfill Data Definitions 5, 14, 16, 17
     ####    Returns: services
     ####        services - fact service data table, filtered on served_children > 0
     def __get_wminor(params):
-        services = Data_Service.fact_services(params)
+        services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_children']>0]
     
     ## DataFrame to fulfill Data Definition 6
     ####    Returns: services
     ####        services - fact service data table, filtered on served_children == 0
     def __get_wominor(params):
-        services = Data_Service.fact_services(params)
+        services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_children']==0]
     
     ## DataFrame to fulfill Data Definitions 8, 18, 22
     ####    Returns: sen_hh_wminor
     ####        sen_hh_wminor - fact service data table, filtered on served_children > 0 and served_seniors > 0
     def __get_sen_wminor(params):
-        seniors = Data_Service.__get_sen(params)
+        seniors = Data_Service.__get_sen(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return seniors[seniors['served_children']>0]
     
     ## DataFrame to fulfill Data Definition 9
     ####    Returns: sen_hh_wominor
     ####        sen_hh_wominor - fact service data table, filtered on served_children == 0 and served_seniors > 0
     def __get_sen_wominor(params):
-        seniors = Data_Service.__get_sen(params)
+        seniors = Data_Service.__get_sen(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return seniors[seniors['served_children']==0]
     
     ## DataFrame to fulfill Data Definitions 10, 20
     ####    Returns: sen_hh
     ####        sen_hh - fact service data table, filtered on served_seniors > 0
     def __get_sen(params):
-        services = Data_Service.fact_services(params)
+        services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_seniors']>0]
     
     ## DataFrame to fulfill Data Definition 11
     ####    Returns: adult_hh_wminor
     ####        adult_hh_wminor - fact service data table, filtered on served_children > 0 and served_adults > 0
     def __get_adult_wminor(params):
-        adults = Data_Service.__get_adult(params)
+        adults = Data_Service.__get_adult(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return adults[adults['served_children']>0]
     
     ## DataFrame to fulfill Data Definition 12
     ####    Returns: adult_hh_wominor
     ####        adult_hh_wominor - fact service data table, filtered on served_children == 0 and served_adults > 0
     def __get_adult_wominor(params):
-        adults = Data_Service.__get_adult(params)
+        adults = Data_Service.__get_adult(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return adults[adults['served_children']==0]
     
     ## DataFrame to fulfill Data Definition 13
     ####    Returns: adult_hh
     ####        adult_hh - fact service data table, filtered on served_adults > 0
     def __get_adult(params):
-        services = Data_Service.fact_services(params)
+        services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_adults']>0]
     
     ## DataFrame to fulfill Data Definition 15
@@ -184,7 +184,7 @@ class Data_Service:
     ####    Returns services_wosenior
     ####        services_wosenior - fact service data table, filtered on served_serniors == 0
     def __get_wosenior(params):
-        services = Data_Service.fact_services(params)
+        services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_seniors']==0]
 
     ## error, none
@@ -196,13 +196,13 @@ class Data_Service:
     #   func = __switcher.get(id)
     #   func()
     data_def_function_switcher = {
-            1: fact_services,
+            1: __get_num_services,
             2: __get_undup_hh,
             3: __get_undup_indv,
             4: fact_services_and_uhh,
             5: __get_wminor,
             6: __get_wominor,
-            7: fact_services,
+            7: __get_num_services,
             8: __get_sen_wminor,
             9: __get_sen_wominor,
             10: __get_sen,
@@ -214,7 +214,7 @@ class Data_Service:
             16: __get_wminor,
             17: __get_wminor,
             18: __get_wominor,
-            19: fact_services,
+            19: __get_num_services,
             20: __get_sen,
             21: __get_wosenior,
             22: __get_sen_wminor,

@@ -376,15 +376,14 @@ def get_demo1_mofc(request):
     ]
     num_defs = len(Data_Service.data_def_function_switcher)
     for i in range(1, num_defs + 1):
-        if i != 3:
-            data_def = {
-                "reportId":1,
-                "reportDictId":1,
-                "dataDefId":i,
-                "name": data_def_names[i-1],
-                "dataDefType":"type1"
-            }
-            input_dict["ReportInfo"].append(data_def)
+        data_def = {
+            "reportId":1,
+            "reportDictId":1,
+            "dataDefId":i,
+            "name": data_def_names[i-1],
+            "dataDefType":"type1"
+        }
+        input_dict["ReportInfo"].append(data_def)
     
 
     # params = parse_request(input_dict)
@@ -436,15 +435,14 @@ def get_demo1_franklin(request):
     ]
     num_defs = len(Data_Service.data_def_function_switcher)
     for i in range(1, num_defs + 1):
-        if i != 3:
-            data_def = {
-                "reportId":1,
-                "reportDictId":1,
-                "dataDefId":i,
-                "name": data_def_names[i-1],
-                "dataDefType":"type1"
-            }
-            input_dict["ReportInfo"].append(data_def)
+        data_def = {
+            "reportId":1,
+            "reportDictId":1,
+            "dataDefId":i,
+            "name": data_def_names[i-1],
+            "dataDefType":"type1"
+        }
+        input_dict["ReportInfo"].append(data_def)
     
 
     # params = parse_request(input_dict)
