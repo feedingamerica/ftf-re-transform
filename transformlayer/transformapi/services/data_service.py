@@ -93,6 +93,7 @@ class Data_Service:
     ####        families - unduplicated families data table
     def __get_undup_hh(params):
         services = Data_Service.fact_services(params)
+        print (services) 
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
     
     ## DataFrame to fulfill Data Definiton 3
@@ -101,7 +102,10 @@ class Data_Service:
     def __get_undup_indv(params):
         conn = connections['default']
         services = Data_Service.fact_services(params)
-        query_individuals = "SELECT research_service_key, research_member_key FROM fact_service_members"
+        start_date = Data_Service.__date_str_to_int(params["Scope"]["startDate"])
+        end_date = Data_Service.__date_str_to_int(params["Scope"]["endDate"])
+        query_individuals = """SELECT mem.research_service_key, mem.research_member_key FROM fact_service_members as mem, fact_services as serv
+        where mem.research_service_key = serv.research_service_key and serv.date>={} and serv.date<={}""".format(start_date,end_date)
         individuals = pd.read_sql(query_individuals, conn)
         services = pd.merge(services,individuals, on = 'research_service_key', how = 'left')
         #research_member_key_y is not a typo, occurs due to overlapping column names in merge
