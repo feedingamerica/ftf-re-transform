@@ -446,3 +446,63 @@ def get_demo1_franklin(request):
     context = { 'report_output': format_dict(cd.request)}
     print_dict(input_dict)
     return render(request, 'transformapi/get-report.html', context)
+
+
+
+def get_demo1_typical(request):
+    input_dict = {
+        "Scope": {
+            "startDate":"01/01/2019",
+            "endDate":"12/31/2019",
+            "scope_field":"loc_id",
+            "scope_field_value":1,
+            "control_type_field":"dummy_is_grocery_service",
+            "control_type_value":1
+        },
+        "ReportInfo": []
+    }
+
+    data_def_names = [
+        "services_total",
+        "undup_hh_total",
+        "undup_indv_total",
+        "services_per_uhh_avg",
+        "hh_wminor",
+        "hh_wominor",
+        "hh_total",
+        "indv_sen_hh_wminor",
+        "indv_sen_hh_wominor",
+        "indv_sen_total",
+        "indv_adult_hh_wminor",
+        "indv_adult_hh_wominor",
+        "indv_adult_total",
+        "indv_child_hh_wminor",
+        "indv_child_hh_wominor",
+        "indv_child_total",
+        "indv_total_hh_wminor",
+        "indv_total_hh_wominor",
+        "indv_total",
+        "hh_wsenior",
+        "hh_wosenior",
+        "hh_grandparent"
+
+    ]
+    num_defs = len(Data_Service.data_def_function_switcher)
+    for i in range(1, num_defs + 1):
+        data_def = {
+            "reportId":1,
+            "reportDictId":1,
+            "dataDefId":i,
+            "name": data_def_names[i-1],
+            "dataDefType":"type1"
+        }
+        input_dict["ReportInfo"].append(data_def)
+    
+
+    # params = parse_request(input_dict)
+    cd = CalculationDispatcher(input_dict)
+    cd.run_calculations()
+
+    context = { 'report_output': format_dict(cd.request)}
+    print_dict(input_dict)
+    return render(request, 'transformapi/get-report.html', context)

@@ -9,9 +9,6 @@ class CalculationDispatcher:
 
         # now on construction, it will automatically run parse request on the input request, so theres no extra in between step
         self.request = self.parse_request(request)
-
-        # self.request = request // don't modify directly
-
         data_list = request["ReportInfo"]
         self.params = request
         self.data_dict = CalculationDispatcher.__group_by_data_def(data_list)

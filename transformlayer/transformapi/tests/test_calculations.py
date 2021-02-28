@@ -75,7 +75,6 @@ class CalculationsTestCase(unittest.TestCase):
         result = func(2,sample_scope_2)
         self.assertEqual(result, EXPECTED_RESULTS["undup_hh_total"]["franklin_value"])
     
-    @unittest.skip
     def test_get_undup_indv_total(self):
         func = calc.data_calc_function_switcher[3]
         result = func(3,sample_scope_2)

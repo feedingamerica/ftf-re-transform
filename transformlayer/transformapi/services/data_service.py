@@ -25,7 +25,8 @@ class Data_Service:
     ##      Additional columns depending on params:
     ##      hierarchy_id - if scope_type is "hierarchy"
     ##      dimgeo_id - if scope_type is "geography"
-    def fact_services(params):
+    @classmethod
+    def fact_services(cls,params):
         if Data_Service.__fact_services is None or params["Scope"] != Data_Service.__scope:
             Data_Service.__scope = copy.deepcopy(params["Scope"])
             Data_Service.__fact_services = Data_Service.__get_fact_services(params)
@@ -92,6 +93,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 1
     ####    Returns: services
     ####        families - unduplicated families data table
+    @staticmethod
     def __get_num_services(params):
         services = Data_Service.fact_services(params)
         return services.drop_duplicates(subset = 'research_service_key', inplace = False)
@@ -99,6 +101,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 2
     ####    Returns: services
     ####        families - unduplicated families data table
+    @staticmethod
     def __get_undup_hh(params):
         services = Data_Service.fact_services(params)
         return services.drop_duplicates(subset = 'research_family_key', inplace = False)
@@ -106,6 +109,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definiton 3
     ####    Returns: services
     ####        inidividuals - unduplicated individuals data table
+    @staticmethod
     def __get_undup_indv(params):
         services = Data_Service.fact_services(params)
         return services.drop_duplicates(subset = 'research_member_key', inplace = False)
@@ -114,12 +118,14 @@ class Data_Service:
     ####    Returns: (services, families)
     ####        services - fact service data table
     ####        families - unduplicated families data table
+    @staticmethod
     def __fact_services_and_uhh(params):
         return Data_Service.__get_num_services(params), Data_Service.__get_undup_hh(params)
     
     ## DataFrame to fulfill Data Definitions 5, 14, 16, 17
     ####    Returns: services
     ####        services - fact service data table, filtered on served_children > 0
+    @staticmethod
     def __get_wminor(params):
         services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_children']>0]
@@ -127,6 +133,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 6
     ####    Returns: services
     ####        services - fact service data table, filtered on served_children == 0
+    @staticmethod
     def __get_wominor(params):
         services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_children']==0]
@@ -134,6 +141,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definitions 8, 18, 22
     ####    Returns: sen_hh_wminor
     ####        sen_hh_wminor - fact service data table, filtered on served_children > 0 and served_seniors > 0
+    @staticmethod
     def __get_sen_wminor(params):
         seniors = Data_Service.__get_sen(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return seniors[seniors['served_children']>0]
@@ -141,6 +149,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 9
     ####    Returns: sen_hh_wominor
     ####        sen_hh_wominor - fact service data table, filtered on served_children == 0 and served_seniors > 0
+    @staticmethod
     def __get_sen_wominor(params):
         seniors = Data_Service.__get_sen(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return seniors[seniors['served_children']==0]
@@ -148,6 +157,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definitions 10, 20
     ####    Returns: sen_hh
     ####        sen_hh - fact service data table, filtered on served_seniors > 0
+    @staticmethod
     def __get_sen(params):
         services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_seniors']>0]
@@ -155,6 +165,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 11
     ####    Returns: adult_hh_wminor
     ####        adult_hh_wminor - fact service data table, filtered on served_children > 0 and served_adults > 0
+    @staticmethod
     def __get_adult_wminor(params):
         adults = Data_Service.__get_adult(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return adults[adults['served_children']>0]
@@ -162,6 +173,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 12
     ####    Returns: adult_hh_wominor
     ####        adult_hh_wominor - fact service data table, filtered on served_children == 0 and served_adults > 0
+    @staticmethod
     def __get_adult_wominor(params):
         adults = Data_Service.__get_adult(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return adults[adults['served_children']==0]
@@ -169,6 +181,7 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 13
     ####    Returns: adult_hh
     ####        adult_hh - fact service data table, filtered on served_adults > 0
+    @staticmethod
     def __get_adult(params):
         services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_adults']>0]
@@ -176,17 +189,20 @@ class Data_Service:
     ## DataFrame to fulfill Data Definition 15
     ####    Returns: empty
     ####        empty - empty data table (no such thing as children wo minors)
+    @staticmethod
     def __get_child_wominor(params):
         return DataFrame()
     
     ## DataFrame to fulfill Data Definition 21
     ####    Returns services_wosenior
     ####        services_wosenior - fact service data table, filtered on served_serniors == 0
+    @staticmethod
     def __get_wosenior(params):
         services = Data_Service.fact_services(params).drop_duplicates(subset = 'research_service_key', inplace = False)
         return services[services['served_seniors']==0]
 
     ## error, none
+    @staticmethod
     def get_data_def_error(params):
         return DataFrame()
 
@@ -195,27 +211,27 @@ class Data_Service:
     #   func = data_def_function_switcher.get(id)
     #   func()
     data_def_function_switcher = {
-            1: __get_num_services,
-            2: __get_undup_hh,
-            3: __get_undup_indv,
-            4: __fact_services_and_uhh,
-            5: __get_wminor,
-            6: __get_wominor,
-            7: __get_num_services,
-            8: __get_sen_wminor,
-            9: __get_sen_wominor,
-            10: __get_sen,
-            11: __get_adult_wminor,
-            12: __get_adult_wominor,
-            13: __get_adult,
-            14: __get_wminor,
-            15: __get_child_wominor,
-            16: __get_wminor,
-            17: __get_wminor,
-            18: __get_wominor,
-            19: __get_num_services,
-            20: __get_sen,
-            21: __get_wosenior,
-            22: __get_sen_wminor,
+            1: __get_num_services.__func__,
+            2: __get_undup_hh.__func__,
+            3: __get_undup_indv.__func__,
+            4: __fact_services_and_uhh.__func__,
+            5: __get_wminor.__func__,
+            6: __get_wominor.__func__,
+            7: __get_num_services.__func__,
+            8: __get_sen_wminor.__func__,
+            9: __get_sen_wominor.__func__,
+            10: __get_sen.__func__,
+            11: __get_adult_wminor.__func__,
+            12: __get_adult_wominor.__func__,
+            13: __get_adult.__func__,
+            14: __get_wminor.__func__,
+            15: __get_child_wominor.__func__,
+            16: __get_wminor.__func__,
+            17: __get_wminor.__func__,
+            18: __get_wominor.__func__,
+            19: __get_num_services.__func__,
+            20: __get_sen.__func__,
+            21: __get_wosenior.__func__,
+            22: __get_sen_wminor.__func__,
         }
 
