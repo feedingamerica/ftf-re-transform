@@ -27,6 +27,7 @@ class Data_Service:
     ##      dimgeo_id - if scope_type is "geography"
     @classmethod
     def fact_services(cls,params):
+        # If fact services scope is changed
         if Data_Service.__fact_services is None or params["Scope"] != Data_Service.__scope:
             Data_Service.__scope = copy.deepcopy(params["Scope"])
             Data_Service.__fact_services = Data_Service.__get_fact_services(params)
@@ -83,6 +84,12 @@ class Data_Service:
         services = services.merge(service_types, how = 'left', left_on= 'service_id', right_on = 'id')
         services = services.query('{} == {}'.format(ct, ct_value))
         return services
+
+    """
+    1. Fact Services joined with Service Members => Table X
+    2. Remove some duplicates from Table X
+    3. Retrieve specific columns from Table X to do calculations with
+    """
 
     @staticmethod
     def __date_str_to_int(date):
